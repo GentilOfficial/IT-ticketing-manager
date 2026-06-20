@@ -1,0 +1,19 @@
+{
+  "name": "it-ticketing-manager",
+  "version": "1.0.0",
+  "description": "API",
+  "license": "ISC",
+  "author": "Federico Gentili",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon index.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.6",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "mongoose": "^9.7.1",
+    "nodemon": "^3.1.14"
+  }
+}
