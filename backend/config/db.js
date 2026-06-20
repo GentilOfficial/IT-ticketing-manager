@@ -8,4 +8,4 @@ const initDB = async (connection) => {
   }
 }
 
-module.exports = initDB
+module.exports = { initDB }

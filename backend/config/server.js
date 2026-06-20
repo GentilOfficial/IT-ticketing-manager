@@ -1,4 +1,4 @@
-const initDB = require('./db')
+const { initDB } = require('./db')
 
 const initServer = async (server, port, DBConnection) => {
   try {
@@ -9,4 +9,4 @@ const initServer = async (server, port, DBConnection) => {
   }
 }
 
-module.exports = initServer
+module.exports = { initServer }
