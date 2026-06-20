@@ -3,6 +3,8 @@ const cors = require('cors')
 const initServer = require('./config/server')
 require('dotenv').config()
 
+const errorHandler = require('./middleware/error.middleware')
+
 const SERVER_PORT = process.env.PORT
 const MONGODB_CONNECTION_STRING = process.env.MONGODB_CONNECTION_STRING
 
@@ -10,5 +12,7 @@ const server = express()
 
 server.use(express.json())
 server.use(cors())
+
+server.use(errorHandler)
 
 initServer(server, SERVER_PORT, MONGODB_CONNECTION_STRING)
