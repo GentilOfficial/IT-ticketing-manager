@@ -3,8 +3,9 @@ const cors = require('cors')
 const { initServer } = require('./config/server')
 require('dotenv').config()
 
-const { errorHandler } = require('./middleware/error.middleware')
 const { requestLogger } = require('./middleware/logger.middleware')
+const { protectRoutes } = require('./middleware/protect.middleware')
+const { errorHandler } = require('./middleware/error.middleware')
 
 const { router } = require('./routes/index.routes')
 
@@ -17,6 +18,7 @@ server.use(express.json())
 server.use(cors())
 
 server.use(requestLogger)
+server.use(protectRoutes)
 server.use('/api', router)
 server.use(errorHandler)
 
