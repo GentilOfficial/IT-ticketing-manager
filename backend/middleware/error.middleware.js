@@ -2,11 +2,11 @@ const { HttpError, InternalServerError } = require('../utils/HttpError')
 
 const errorHandler = async (error, req, res, next) => {
   if (error instanceof HttpError) {
-    res.status(error.status).send({ error: error.message })
+    return res.status(error.status).send({ success: false, message: error.message })
   }
 
   const internalError = new InternalServerError()
-  res.status(internalError.status).send({ error: internalError.message })
+  return res.status(internalError.status).send({ success: false, message: internalError.message })
 }
 
-module.exports = errorHandler
+module.exports = { errorHandler }
