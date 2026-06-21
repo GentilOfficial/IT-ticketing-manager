@@ -7,7 +7,7 @@ const requestLogger = async (req, res, next) => {
     console.log(`${new Date().toISOString()} - [${ip}] ${method} ${url} ${duration}ms`)
   })
 
-  next()
+  return next()
 }
 
 module.exports = { requestLogger }

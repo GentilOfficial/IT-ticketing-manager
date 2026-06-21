@@ -20,10 +20,10 @@ const protectRoutes = async (req, res, next) => {
 
     req.jwtUser = verify(token, process.env.JWT_SIGN_SECRET)
 
-    next()
+    return next()
   } catch (e) {
     if (e instanceof JsonWebTokenError) throw new InvalidToken()
-    next(e)
+    return next(e)
   }
 }
 

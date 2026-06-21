@@ -47,6 +47,12 @@ class UserNotFound extends HttpError {
   }
 }
 
+class UnauthorizedUser extends HttpError {
+  constructor() {
+    super(403, 'Access denied. Insufficient permissions.')
+  }
+}
+
 module.exports = {
   HttpError,
   InternalServerError,
@@ -56,4 +62,5 @@ module.exports = {
   MissingToken,
   InvalidToken,
   UserNotFound,
+  UnauthorizedUser,
 }
