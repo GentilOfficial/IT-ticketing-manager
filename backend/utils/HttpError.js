@@ -11,4 +11,10 @@ class InternalServerError extends HttpError {
   }
 }
 
-module.exports = { HttpError, InternalServerError }
+class InvalidTicketStatusTransition extends HttpError {
+  constructor(currentStatus, newStatus) {
+    super(400, `Status transition not allowed: ${currentStatus} -> ${newStatus}`)
+  }
+}
+
+module.exports = { HttpError, InternalServerError, InvalidTicketStatusTransition }
