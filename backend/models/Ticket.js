@@ -1,4 +1,5 @@
 const { Schema, model } = require('mongoose')
+const { InvalidTicketStatusTransition } = require('../utils/HttpError')
 
 const ticketSchema = new Schema(
   {
@@ -38,5 +39,30 @@ ticketSchema.pre('save', function () {
   if (!this.isModified('status')) return
   this.resolvedAt = this.status === 'resolved' ? new Date() : null
 })
+
+ticketSchema.methods.changeStatus = async function (newStatus) {
+  if (this.status === newStatus) {
+    return this
+  }
+
+  const ALLOWED_TRANSITIONS = {
+    open: ['in_progress', 'on_hold'],
+    in_progress: ['resolved', 'on_hold', 'open'],
+    on_hold: ['in_progress', 'open'],
+    resolved: ['open'],
+  }
+
+  const allowed = ALLOWED_TRANSITIONS[this.status] ?? []
+
+  if (!allowed.includes(newStatus)) {
+    throw new InvalidTicketStatusTransition(this.status, newStatus)
+  }
+
+  this.status = newStatus
+
+  await this.save()
+
+  return this
+}
 
 module.exports = model('ticket', ticketSchema, 'tickets')
