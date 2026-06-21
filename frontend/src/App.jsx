@@ -1,8 +1,12 @@
+import LoginPage from './pages/LoginPage'
+import AuthProvider from './providers/AuthProvider'
+
 const App = () => {
   return (
-    <div>
+    <AuthProvider>
       <h1 className="text-display">Hello World!</h1>
-    </div>
+      <LoginPage />
+    </AuthProvider>
   )
 }
 
