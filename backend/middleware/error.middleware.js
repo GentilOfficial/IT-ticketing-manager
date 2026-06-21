@@ -9,4 +9,4 @@ const errorHandler = async (error, req, res, next) => {
   res.status(internalError.status).send({ error: internalError.message })
 }
 
-module.exports = errorHandler
+module.exports = { errorHandler }
