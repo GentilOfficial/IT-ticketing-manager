@@ -67,7 +67,7 @@ const login = async (req, res, next) => {
 const loggedUser = async (req, res, next) => {
   try {
     const { jwtUser } = req
-    const user = await User.findOne({ _id: jwtUser.user_id })
+    const user = await User.findById(jwtUser.user_id)
 
     if (!user) {
       throw new UserNotFound()
