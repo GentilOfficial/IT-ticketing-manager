@@ -1,14 +1,14 @@
-import { LoginForm } from '@/components/auth/LoginForm'
+import { SignupForm } from '@/components/auth/SignupForm'
 import AuthLayout from '@/layouts/AuthLayout'
 
-const LoginPage = () => {
+const SignupPage = () => {
   return (
     <AuthLayout>
       <div className="w-full max-w-xs">
-        <LoginForm />
+        <SignupForm />
       </div>
     </AuthLayout>
   )
 }
 
-export default LoginPage
+export default SignupPage
