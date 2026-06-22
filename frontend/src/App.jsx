@@ -1,5 +1,5 @@
-import LoginPage from './pages/LoginPage'
-import AuthProvider from './providers/AuthProvider'
+import LoginPage from '@/pages/LoginPage'
+import AuthProvider from '@/providers/AuthProvider'
 
 const App = () => {
   return (

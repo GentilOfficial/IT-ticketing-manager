@@ -1,5 +1,6 @@
+import { Button } from '@/components/ui/button'
+import { AuthContext } from '@/providers/AuthProvider'
 import { useContext, useState } from 'react'
-import { AuthContext } from '../providers/AuthProvider'
 
 const LoginPage = () => {
   const { login, errors } = useContext(AuthContext)
@@ -70,9 +71,9 @@ const LoginPage = () => {
         {fieldErrors.password && <p className="text-red-500">{fieldErrors.password}</p>}
       </div>
 
-      <button type="submit" className="border mt-2">
+      <Button type="submit" className="mt-2">
         Login
-      </button>
+      </Button>
     </form>
   )
 }
