@@ -1,3 +1,4 @@
+import AuthRoute from '@/middleware/AuthRoute'
 import ProtectedRoute from '@/middleware/ProtectedRoute'
 import HomePage from '@/pages/HomePage'
 import LoginPage from '@/pages/LoginPage'
@@ -13,7 +14,7 @@ const App = () => {
           <Route path="/" element={<ProtectedRoute />}>
             <Route index element={<HomePage />} />
           </Route>
-          <Route path="auth">
+          <Route path="auth" element={<AuthRoute />}>
             <Route index element={<Navigate to="login" replace />} />
             <Route path="login" element={<LoginPage />} />
             <Route path="signup" element={<SignupPage />} />
