@@ -22,7 +22,7 @@ const AuthProvider = ({ children }) => {
       const data = await response.json()
 
       if (!data.success) {
-        throw new Error(data.message || 'Invalid token')
+        throw new Error(data.message || 'Session expired. Please login again.')
       }
 
       setUser(data.user)
@@ -51,7 +51,7 @@ const AuthProvider = ({ children }) => {
       const data = await response.json()
 
       if (!data.success) {
-        setErrors(data.errors || data.message || 'Login failed')
+        setErrors(data.errors || data.message || 'Incorrect email or password.')
         return
       }
 
@@ -61,7 +61,35 @@ const AuthProvider = ({ children }) => {
       await fetchUser(data.token)
     } catch (e) {
       console.error('An error occurred during authentication:', e)
-      setErrors('Network error')
+      setErrors('Network error. Please check your internet connection.')
+    }
+  }
+
+  const register = async (userDetails) => {
+    setErrors(null)
+    try {
+      const response = await fetch(`${import.meta.env.VITE_API_SERVER}/api/auth/register`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(userDetails),
+      })
+
+      const data = await response.json()
+
+      if (!data.success) {
+        setErrors(data.errors || data.message || 'Unable to create account. Please try again.')
+        return
+      }
+
+      setToken(data.token)
+      localStorage.setItem(TOKEN_KEY, data.token)
+
+      await fetchUser(data.token)
+    } catch (e) {
+      console.error('An error occurred during registration:', e)
+      setErrors('Network error. Please check your internet connection.')
     }
   }
 
@@ -97,6 +125,7 @@ const AuthProvider = ({ children }) => {
         isAuthenticated: !!user,
         login,
         logout,
+        register,
         errors,
         isLoading,
       }}
