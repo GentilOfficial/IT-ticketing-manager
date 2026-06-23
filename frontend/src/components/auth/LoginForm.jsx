@@ -14,6 +14,9 @@ export function LoginForm() {
   })
   const [isLoading, setIsLoading] = useState(false)
 
+  const fieldErrors = Array.isArray(errors) ? errors : []
+  const formError = typeof errors === 'string' ? errors : null
+
   const canSubmitForm = credentials.email !== '' && credentials.password !== ''
 
   const setCredentialsField = (e) => {
@@ -59,7 +62,7 @@ export function LoginForm() {
           required
           value={credentials.email}
           onChange={setCredentialsField}
-          errors={errors}
+          errors={fieldErrors}
           disabled={isLoading}
         />
         <FormField
@@ -70,11 +73,11 @@ export function LoginForm() {
           required
           value={credentials.password}
           onChange={setCredentialsField}
-          errors={errors}
+          errors={fieldErrors}
           disabled={isLoading}
         />
         <Field>
-          {typeof errors === 'string' && <FieldDescription className="text-destructive">{errors}</FieldDescription>}
+          {formError && <FieldDescription className="text-destructive">{formError}</FieldDescription>}
           <Button type="submit" disabled={!canSubmitForm || isLoading}>
             {isLoading ? <Spinner /> : 'Login'}
           </Button>
