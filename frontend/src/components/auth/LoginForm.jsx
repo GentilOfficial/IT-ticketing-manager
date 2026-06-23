@@ -53,23 +53,23 @@ export function LoginForm() {
         </div>
         <FormField
           name="email"
-          visualName="Email"
+          label="Email"
           type="email"
           placeholder="your@email.com"
           required
           value={credentials.email}
-          onChangeSet={setCredentialsField}
+          onChange={setCredentialsField}
           errors={errors}
           disabled={isLoading}
         />
         <FormField
           name="password"
-          visualName="Password"
+          label="Password"
           type="password"
           placeholder="••••••••"
           required
           value={credentials.password}
-          onChangeSet={setCredentialsField}
+          onChange={setCredentialsField}
           errors={errors}
           disabled={isLoading}
         />
