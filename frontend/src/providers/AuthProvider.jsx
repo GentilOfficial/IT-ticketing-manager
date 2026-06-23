@@ -8,6 +8,7 @@ const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null)
   const [token, setToken] = useState(() => localStorage.getItem(TOKEN_KEY))
   const [errors, setErrors] = useState(null)
+  const [isLoading, setIsLoading] = useState(false)
 
   const fetchUser = async (authToken) => {
     try {
@@ -74,8 +75,13 @@ const AuthProvider = ({ children }) => {
     const initAuth = async () => {
       const storedToken = localStorage.getItem(TOKEN_KEY)
       if (!storedToken) return
+
+      setIsLoading(true)
+
       const isValid = await fetchUser(storedToken)
       if (isValid) setToken(storedToken)
+
+      setIsLoading(false)
     }
 
     initAuth()
@@ -90,6 +96,7 @@ const AuthProvider = ({ children }) => {
         login,
         logout,
         errors,
+        isLoading,
       }}
     >
       {children}
