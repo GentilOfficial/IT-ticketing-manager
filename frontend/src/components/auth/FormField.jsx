@@ -6,41 +6,52 @@ import { useState } from 'react'
 
 const FormField = ({
   name,
-  visualName = name,
+  label,
   type = 'text',
-  placeholder = null,
+  placeholder,
   required = false,
-  value = null,
-  onChangeSet = () => null,
-  errors = null,
+  value,
+  onChange = () => null,
+  errors,
   disabled = false,
+  passwordVisible,
+  onPasswordToggle = () => null,
 }) => {
   const [viewPassword, setViewPassword] = useState(false)
 
-  const togglePassword = () => {
-    setViewPassword(!viewPassword)
+  const isPassword = type === 'password'
+  const isControlledPassword = typeof passwordVisible === 'boolean'
+  const isPasswordVisible = isControlledPassword ? passwordVisible : viewPassword
+  const inputType = isPassword ? (isPasswordVisible ? 'text' : 'password') : type
+
+  const handlePasswordToggle = () => {
+    if (isControlledPassword) {
+      onPasswordToggle(!passwordVisible)
+    } else {
+      setViewPassword(!viewPassword)
+    }
   }
 
   return (
     <Field>
       <FieldLabel className={Array.isArray(errors) && errors.some((err) => err.field === name) && 'text-destructive'}>
-        {visualName}
+        {label}
       </FieldLabel>
       <InputGroup>
         <InputGroupInput
           name={name}
-          type={type === 'password' ? (viewPassword ? 'text' : 'password') : type}
+          type={inputType}
           placeholder={placeholder}
           required={required}
           value={value}
           disabled={disabled}
-          onChange={onChangeSet}
+          onChange={onChange}
           aria-invalid={Array.isArray(errors) && errors.some((err) => err.field === name)}
         />
-        {type === 'password' && (
+        {isPassword && (
           <InputGroupAddon align="inline-end">
-            <Button type="button" size="xs" variant="ghost" onClick={togglePassword}>
-              {viewPassword ? <EyeIcon className="size-4" /> : <EyeOff className="size-4" />}
+            <Button type="button" size="xs" variant="ghost" onClick={handlePasswordToggle}>
+              {isPasswordVisible ? <EyeIcon className="size-4" /> : <EyeOff className="size-4" />}
             </Button>
           </InputGroupAddon>
         )}
