@@ -6,10 +6,7 @@ const AuthRoute = () => {
   const { isAuthenticated, isLoading } = useAuth()
 
   if (isLoading) return <InitAuthLoading />
-
-  if (isAuthenticated) {
-    return <Navigate to="/" replace />
-  }
+  if (isAuthenticated) return <Navigate to="/" replace />
 
   return <Outlet />
 }
