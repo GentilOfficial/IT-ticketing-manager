@@ -8,7 +8,7 @@ const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null)
   const [token, setToken] = useState(() => localStorage.getItem(TOKEN_KEY))
   const [errors, setErrors] = useState(null)
-  const [isLoading, setIsLoading] = useState(false)
+  const [isLoading, setIsLoading] = useState(true)
 
   const fetchUser = async (authToken) => {
     try {
@@ -73,15 +73,17 @@ const AuthProvider = ({ children }) => {
 
   useEffect(() => {
     const initAuth = async () => {
-      const storedToken = localStorage.getItem(TOKEN_KEY)
-      if (!storedToken) return
-
       setIsLoading(true)
+      try {
+        const storedToken = localStorage.getItem(TOKEN_KEY)
 
-      const isValid = await fetchUser(storedToken)
-      if (isValid) setToken(storedToken)
-
-      setIsLoading(false)
+        if (storedToken) {
+          const isValid = await fetchUser(storedToken)
+          if (isValid) setToken(storedToken)
+        }
+      } finally {
+        setIsLoading(false)
+      }
     }
 
     initAuth()
