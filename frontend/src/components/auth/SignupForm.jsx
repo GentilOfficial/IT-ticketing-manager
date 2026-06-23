@@ -1,6 +1,7 @@
 import { Button } from '@/components/ui/button'
 import { Field, FieldDescription, FieldGroup, FieldLabel, FieldSeparator } from '@/components/ui/field'
 import { Input } from '@/components/ui/input'
+import { Link } from 'react-router'
 
 export function SignupForm() {
   return (
@@ -33,9 +34,9 @@ export function SignupForm() {
         </Field>
         <FieldSeparator>or</FieldSeparator>
         <Field>
-          <FieldDescription className="px-6 text-center">
+          <FieldDescription className="text-center">
             <span className="me-1">Already have an account?</span>
-            <a href="#">Sign in</a>
+            <Link to="/auth/login">Sign in</Link>
           </FieldDescription>
         </Field>
       </FieldGroup>

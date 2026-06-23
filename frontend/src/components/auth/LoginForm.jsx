@@ -1,6 +1,7 @@
 import { Button } from '@/components/ui/button'
 import { Field, FieldDescription, FieldGroup, FieldLabel, FieldSeparator } from '@/components/ui/field'
 import { Input } from '@/components/ui/input'
+import { Link } from 'react-router'
 
 export function LoginForm() {
   return (
@@ -15,9 +16,7 @@ export function LoginForm() {
           <Input name="email" type="email" placeholder="your@email.com" required />
         </Field>
         <Field>
-          <div className="flex items-center">
-            <FieldLabel>Password</FieldLabel>
-          </div>
+          <FieldLabel>Password</FieldLabel>
           <Input name="password" type="password" required />
         </Field>
         <Field>
@@ -27,9 +26,7 @@ export function LoginForm() {
         <Field>
           <FieldDescription className="text-center">
             <span className="me-1">Don't have an account?</span>
-            <a href="#" className="underline underline-offset-4">
-              Sign up
-            </a>
+            <Link to="/auth/signup">Sign up</Link>
           </FieldDescription>
         </Field>
       </FieldGroup>
