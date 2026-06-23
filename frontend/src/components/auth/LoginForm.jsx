@@ -1,6 +1,7 @@
 import FormField from '@/components/auth/FormField'
 import { Button } from '@/components/ui/button'
 import { Field, FieldDescription, FieldGroup, FieldSeparator } from '@/components/ui/field'
+import { Spinner } from '@/components/ui/spinner'
 import { useAuth } from '@/providers/AuthProvider'
 import { useState } from 'react'
 import { Link } from 'react-router'
@@ -11,6 +12,8 @@ export function LoginForm() {
     email: '',
     password: '',
   })
+  const [isLoading, setIsLoading] = useState(false)
+
   const canSubmitForm = credentials.email !== '' && credentials.password !== ''
 
   const setCredentialsField = (e) => {
@@ -21,11 +24,21 @@ export function LoginForm() {
     })
   }
 
+  const resetPasswordField = () => {
+    setCredentials({
+      ...credentials,
+      password: '',
+    })
+  }
+
   const handleFormSubmit = (e) => {
     e.preventDefault()
 
     const tryLogin = async () => {
+      setIsLoading(true)
       await login(credentials)
+      setIsLoading(false)
+      resetPasswordField()
     }
 
     tryLogin()
@@ -47,6 +60,7 @@ export function LoginForm() {
           value={credentials.email}
           onChangeSet={setCredentialsField}
           errors={errors}
+          disabled={isLoading}
         />
         <FormField
           name="password"
@@ -57,11 +71,12 @@ export function LoginForm() {
           value={credentials.password}
           onChangeSet={setCredentialsField}
           errors={errors}
+          disabled={isLoading}
         />
         <Field>
           {typeof errors === 'string' && <FieldDescription className="text-destructive">{errors}</FieldDescription>}
-          <Button type="submit" disabled={!canSubmitForm}>
-            Login
+          <Button type="submit" disabled={!canSubmitForm || isLoading}>
+            {isLoading ? <Spinner /> : 'Login'}
           </Button>
         </Field>
         <FieldSeparator>or</FieldSeparator>
