@@ -1,6 +1,7 @@
 const User = require('../models/User')
 const { generateToken } = require('../utils/generateToken')
 const { MissingFields, InvalidCredentials, UserNotFound } = require('../utils/HttpError')
+const { sendSuccess } = require('../utils/responses')
 
 const register = async (req, res, next) => {
   try {
@@ -24,10 +25,7 @@ const register = async (req, res, next) => {
 
     const token = generateToken(user)
 
-    return res.status(200).send({
-      success: true,
-      token,
-    })
+    return sendSuccess(res, { token }, 201)
   } catch (e) {
     return next(e)
   }
@@ -55,10 +53,7 @@ const login = async (req, res, next) => {
 
     const token = generateToken(user)
 
-    return res.status(200).send({
-      success: true,
-      token,
-    })
+    return sendSuccess(res, { token })
   } catch (e) {
     return next(e)
   }
@@ -73,10 +68,7 @@ const loggedUser = async (req, res, next) => {
       throw new UserNotFound()
     }
 
-    return res.status(200).send({
-      success: true,
-      user,
-    })
+    return sendSuccess(res, { user }, 201)
   } catch (e) {
     return next(e)
   }

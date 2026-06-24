@@ -1,16 +1,5 @@
-const { body, validationResult } = require('express-validator')
-
-const handleValidationError = (req, res, next) => {
-  const errors = validationResult(req)
-  if (!errors.isEmpty()) {
-    const formattedErrors = errors.array().map((error) => ({
-      field: error.path,
-      message: error.msg,
-    }))
-    return res.status(400).send({ success: false, message: 'Validation failed', errors: formattedErrors })
-  }
-  return next()
-}
+const { body } = require('express-validator')
+const { validateRequest } = require('../validation.middleware')
 
 const validateRegister = [
   body('name').trim().isLength({ min: 2, max: 60 }).withMessage('Name must be between 2 and 60 characters'),
@@ -29,13 +18,13 @@ const validateRegister = [
     .not()
     .matches(/\s/)
     .withMessage('Password cannot contain spaces'),
-  handleValidationError,
+  validateRequest,
 ]
 
 const validateLogin = [
   body('email').isEmail().trim().withMessage('Invalid email address'),
   body('password').notEmpty().withMessage('Required password'),
-  handleValidationError,
+  validateRequest,
 ]
 
 module.exports = { validateRegister, validateLogin }

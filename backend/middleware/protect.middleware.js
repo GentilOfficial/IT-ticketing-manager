@@ -22,7 +22,7 @@ const protectRoutes = async (req, res, next) => {
 
     return next()
   } catch (e) {
-    if (e instanceof JsonWebTokenError) throw new InvalidToken()
+    if (e instanceof JsonWebTokenError) return next(new InvalidToken())
     return next(e)
   }
 }
