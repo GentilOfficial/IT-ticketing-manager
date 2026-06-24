@@ -24,7 +24,7 @@ const register = async (req, res, next) => {
 
     const token = generateToken(user)
 
-    return res.status(200).send({
+    return res.status(201).send({
       success: true,
       token,
     })
