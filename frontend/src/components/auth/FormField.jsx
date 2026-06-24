@@ -1,5 +1,5 @@
 import { Button } from '@/components/ui/button'
-import { Field, FieldDescription, FieldLabel } from '@/components/ui/field'
+import { Field, FieldLabel } from '@/components/ui/field'
 import { InputGroup, InputGroupAddon, InputGroupInput } from '@/components/ui/input-group'
 import { EyeIcon, EyeOff } from 'lucide-react'
 import { useState } from 'react'
@@ -57,17 +57,15 @@ const FormField = ({
         )}
       </InputGroup>
       {Array.isArray(errors) && errors.some((err) => err.field === name) && (
-        <FieldDescription>
-          <ul className="list-disc list-inside">
-            {errors
-              .filter((err) => err.field === name)
-              .map((err, i) => (
-                <li key={`error-${name}-${i}`} className="text-destructive">
-                  {err.message}
-                </li>
-              ))}
-          </ul>
-        </FieldDescription>
+        <ul className="list-disc list-inside text-xs">
+          {errors
+            .filter((err) => err.field === name)
+            .map((err, i) => (
+              <li key={`error-${name}-${i}`} className="text-destructive">
+                {err.message}
+              </li>
+            ))}
+        </ul>
       )}
     </Field>
   )

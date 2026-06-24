@@ -6,7 +6,7 @@ import { useAuth } from '@/providers/AuthProvider'
 import { useState } from 'react'
 import { Link } from 'react-router'
 
-export function LoginForm() {
+const LoginForm = () => {
   const { login, errors } = useAuth()
   const [credentials, setCredentials] = useState({
     email: '',
@@ -17,13 +17,13 @@ export function LoginForm() {
   const fieldErrors = Array.isArray(errors) ? errors : []
   const formError = typeof errors === 'string' ? errors : null
 
-  const canSubmitForm = credentials.email !== '' && credentials.password !== ''
+  const canSubmitForm = Object.values(credentials).every(Boolean)
 
   const setCredentialsField = (e) => {
     const { name, value } = e.target
     setCredentials({
       ...credentials,
-      [name]: value.trim(),
+      [name]: value,
     })
   }
 
@@ -58,7 +58,7 @@ export function LoginForm() {
           name="email"
           label="Email"
           type="email"
-          placeholder="your@email.com"
+          placeholder="name@example.com"
           required
           value={credentials.email}
           onChange={setCredentialsField}
@@ -69,7 +69,7 @@ export function LoginForm() {
           name="password"
           label="Password"
           type="password"
-          placeholder="••••••••"
+          placeholder="Enter your password"
           required
           value={credentials.password}
           onChange={setCredentialsField}
@@ -93,3 +93,5 @@ export function LoginForm() {
     </form>
   )
 }
+
+export default LoginForm
