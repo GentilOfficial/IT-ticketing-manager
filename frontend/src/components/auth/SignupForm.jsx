@@ -1,12 +1,14 @@
 import FormField from '@/components/auth/FormField'
+import PasswordChecklist from '@/components/auth/PasswordChecklist'
 import { Button } from '@/components/ui/button'
 import { Field, FieldDescription, FieldGroup, FieldSeparator } from '@/components/ui/field'
 import { Spinner } from '@/components/ui/spinner'
+import usePasswordValidation from '@/hooks/usePasswordValidation'
 import { useAuth } from '@/providers/AuthProvider'
 import { useState } from 'react'
 import { Link } from 'react-router'
 
-export function SignupForm() {
+const SignupForm = () => {
   const { register, errors } = useAuth()
   const [userDetails, setUserDetails] = useState({
     name: '',
@@ -16,11 +18,14 @@ export function SignupForm() {
   })
   const [isLoading, setIsLoading] = useState(false)
   const [isPasswordVisible, setIsPasswordVisible] = useState(false)
+  const { passwordChecks, isValidPassword, passwordsMatch } = usePasswordValidation(
+    userDetails.password,
+    userDetails.confirmPassword,
+  )
 
   const fieldErrors = Array.isArray(errors) ? errors : []
   const formError = typeof errors === 'string' ? errors : null
 
-  const passwordsMatch = userDetails.password === userDetails.confirmPassword
   const confirmPasswordError = userDetails.confirmPassword && !passwordsMatch ? "Passwords doesn't match" : null
 
   const mergedFieldErrors = [
@@ -28,12 +33,7 @@ export function SignupForm() {
     ...(confirmPasswordError ? [{ field: 'confirmPassword', message: confirmPasswordError }] : []),
   ]
 
-  const canSubmitForm =
-    userDetails.name !== '' &&
-    userDetails.email !== '' &&
-    userDetails.password !== '' &&
-    userDetails.confirmPassword !== '' &&
-    passwordsMatch
+  const canSubmitForm = Object.values(userDetails).every(Boolean) && isValidPassword && passwordsMatch
 
   const setUserDetailsField = (e) => {
     const { name, value } = e.target
@@ -80,7 +80,7 @@ export function SignupForm() {
         <FormField
           name="name"
           label="Full Name"
-          placeholder="Federico Gentili"
+          placeholder="Enter your full name"
           required
           value={userDetails.name}
           onChange={setUserDetailsField}
@@ -91,7 +91,7 @@ export function SignupForm() {
           name="email"
           label="Email"
           type="email"
-          placeholder="your@email.com"
+          placeholder="name@example.com"
           required
           value={userDetails.email}
           onChange={setUserDetailsField}
@@ -102,7 +102,7 @@ export function SignupForm() {
           name="password"
           label="Password"
           type="password"
-          placeholder="••••••••"
+          placeholder="Enter your password"
           required
           value={userDetails.password}
           onChange={setUserDetailsField}
@@ -111,11 +111,15 @@ export function SignupForm() {
           passwordVisible={isPasswordVisible}
           onPasswordToggle={togglePassword}
         />
+        <Field>
+          <FieldDescription>Password requirements:</FieldDescription>
+          <PasswordChecklist checks={passwordChecks} />
+        </Field>
         <FormField
           name="confirmPassword"
           label="Confirm Password"
           type="password"
-          placeholder="••••••••"
+          placeholder="Confirm your password"
           required
           value={userDetails.confirmPassword}
           onChange={setUserDetailsField}
@@ -145,3 +149,5 @@ export function SignupForm() {
     </form>
   )
 }
+
+export default SignupForm
