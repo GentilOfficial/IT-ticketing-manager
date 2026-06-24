@@ -59,6 +59,19 @@ class TicketNotFound extends HttpError {
   }
 }
 
+class ValidationError extends HttpError {
+  constructor(errors) {
+    super(400, 'Validation failed.')
+    this.errors = errors
+  }
+}
+
+class InvalidObjectId extends HttpError {
+  constructor() {
+    super(400, `Invalid resource id.`)
+  }
+}
+
 module.exports = {
   HttpError,
   InternalServerError,
@@ -70,4 +83,6 @@ module.exports = {
   UserNotFound,
   UnauthorizedUser,
   TicketNotFound,
+  ValidationError,
+  InvalidObjectId,
 }

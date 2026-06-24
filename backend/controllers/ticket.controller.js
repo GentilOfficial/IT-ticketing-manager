@@ -1,6 +1,7 @@
 const User = require('../models/User')
 const Ticket = require('../models/Ticket')
 const { UserNotFound, MissingFields, TicketNotFound, UnauthorizedUser } = require('../utils/HttpError')
+const { sendSuccess } = require('../utils/responses')
 
 const getTickets = async (req, res, next) => {
   try {
@@ -14,10 +15,7 @@ const getTickets = async (req, res, next) => {
 
     const tickets = await Ticket.find(user.isAdmin() ? {} : { createdBy: user.id })
 
-    return res.status(200).send({
-      success: true,
-      tickets,
-    })
+    return sendSuccess(res, { tickets })
   } catch (e) {
     return next(e)
   }
@@ -36,10 +34,7 @@ const createTicket = async (req, res, next) => {
     const ticket = new Ticket({ title, description, createdBy: jwtUser.user_id })
     await ticket.save()
 
-    return res.status(201).send({
-      success: true,
-      ticket,
-    })
+    return sendSuccess(res, { ticket }, 201)
   } catch (e) {
     return next(e)
   }
@@ -65,10 +60,7 @@ const getTicketDetails = async (req, res, next) => {
       throw new UnauthorizedUser()
     }
 
-    return res.status(200).send({
-      success: true,
-      ticket,
-    })
+    return sendSuccess(res, { ticket })
   } catch (e) {
     return next(e)
   }
@@ -105,10 +97,7 @@ const editTicketDetails = async (req, res, next) => {
       await ticket.save()
     }
 
-    return res.status(200).send({
-      success: true,
-      ticket,
-    })
+    return sendSuccess(res, { ticket })
   } catch (e) {
     return next(e)
   }

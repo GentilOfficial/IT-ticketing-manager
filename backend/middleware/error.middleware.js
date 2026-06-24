@@ -1,12 +1,22 @@
-const { HttpError, InternalServerError } = require('../utils/HttpError')
+const { Error } = require('mongoose')
+const { HttpError, InternalServerError, InvalidObjectId } = require('../utils/HttpError')
+const { sendError } = require('../utils/responses')
 
-const errorHandler = async (error, req, res, next) => {
-  if (error instanceof HttpError) {
-    return res.status(error.status).send({ success: false, message: error.message })
+const mapError = (err) => {
+  if (err instanceof HttpError) {
+    return err
   }
 
-  const internalError = new InternalServerError()
-  return res.status(internalError.status).send({ success: false, message: internalError.message })
+  if (err instanceof Error.CastError) {
+    return new InvalidObjectId()
+  }
+
+  return new InternalServerError()
+}
+
+const errorHandler = async (err, req, res, next) => {
+  const error = mapError(err)
+  return sendError(res, error.status, error.message, error.errors)
 }
 
 module.exports = { errorHandler }
