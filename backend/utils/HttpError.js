@@ -53,6 +53,12 @@ class UnauthorizedUser extends HttpError {
   }
 }
 
+class TicketNotFound extends HttpError {
+  constructor() {
+    super(404, 'Ticket not found.')
+  }
+}
+
 module.exports = {
   HttpError,
   InternalServerError,
@@ -63,4 +69,5 @@ module.exports = {
   InvalidToken,
   UserNotFound,
   UnauthorizedUser,
+  TicketNotFound,
 }

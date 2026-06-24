@@ -1,6 +1,6 @@
 const User = require('../models/User')
 const Ticket = require('../models/Ticket')
-const { UserNotFound, MissingFields } = require('../utils/HttpError')
+const { UserNotFound, MissingFields, TicketNotFound, UnauthorizedUser } = require('../utils/HttpError')
 
 const getTickets = async (req, res, next) => {
   try {
@@ -12,7 +12,7 @@ const getTickets = async (req, res, next) => {
       throw new UserNotFound()
     }
 
-    const tickets = await Ticket.find(user.isAdmin() ? {} : { createdBy: user._id })
+    const tickets = await Ticket.find(user.isAdmin() ? {} : { createdBy: user.id })
 
     return res.status(200).send({
       success: true,
@@ -45,4 +45,33 @@ const createTicket = async (req, res, next) => {
   }
 }
 
-module.exports = { getTickets, createTicket }
+const getTicketDetails = async (req, res, next) => {
+  try {
+    const { params, jwtUser } = req
+
+    const ticket = await Ticket.findById(params.id).populate(['createdBy'])
+
+    if (!ticket) {
+      throw new TicketNotFound()
+    }
+
+    const user = await User.findById(jwtUser.user_id)
+
+    if (!user) {
+      throw new UserNotFound()
+    }
+
+    if (!user.isAdmin() && ticket.createdBy.id !== user.id) {
+      throw new UnauthorizedUser()
+    }
+
+    return res.status(200).send({
+      success: true,
+      ticket,
+    })
+  } catch (e) {
+    return next(e)
+  }
+}
+
+module.exports = { getTickets, createTicket, getTicketDetails }
