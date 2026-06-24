@@ -51,4 +51,8 @@ userSchema.methods.comparePassword = function (password) {
   return compare(password, this.password)
 }
 
+userSchema.methods.isAdmin = function () {
+  return this.role === 'admin'
+}
+
 module.exports = model('user', userSchema, 'users')
