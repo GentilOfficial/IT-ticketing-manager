@@ -5,5 +5,6 @@ const ticketController = require('../controllers/ticket.controller')
 ticketRoutes.get('/', ticketController.getTickets)
 ticketRoutes.post('/', ticketController.createTicket)
 ticketRoutes.get('/:id', ticketController.getTicketDetails)
+ticketRoutes.put('/:id', ticketController.editTicketDetails)
 
 module.exports = { ticketRoutes }

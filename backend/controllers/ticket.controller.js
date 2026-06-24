@@ -74,4 +74,44 @@ const getTicketDetails = async (req, res, next) => {
   }
 }
 
-module.exports = { getTickets, createTicket, getTicketDetails }
+const editTicketDetails = async (req, res, next) => {
+  try {
+    const { params, jwtUser } = req
+
+    const ticket = await Ticket.findById(params.id)
+
+    if (!ticket) {
+      throw new TicketNotFound()
+    }
+
+    const user = await User.findById(jwtUser.user_id)
+
+    if (!user) {
+      throw new UserNotFound()
+    }
+
+    if (!user.isAdmin() && ticket.createdBy.id !== user.id) {
+      throw new UnauthorizedUser()
+    }
+
+    const { title, description, status } = req.body
+
+    if (title) ticket.title = title
+    if (description) ticket.description = description
+
+    if (status) {
+      await ticket.changeStatus(status)
+    } else {
+      await ticket.save()
+    }
+
+    return res.status(200).send({
+      success: true,
+      ticket,
+    })
+  } catch (e) {
+    return next(e)
+  }
+}
+
+module.exports = { getTickets, createTicket, getTicketDetails, editTicketDetails }
