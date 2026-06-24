@@ -90,7 +90,7 @@ const editTicketDetails = async (req, res, next) => {
       throw new UserNotFound()
     }
 
-    if (!user.isAdmin() && ticket.createdBy.id !== user.id) {
+    if (!user.isAdmin() && !ticket.createdBy.equals(user.id)) {
       throw new UnauthorizedUser()
     }
 
