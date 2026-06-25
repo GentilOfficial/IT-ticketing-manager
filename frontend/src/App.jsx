@@ -2,6 +2,7 @@ import { TooltipProvider } from '@/components/ui/tooltip'
 import AuthRoute from '@/middleware/AuthRoute'
 import ProtectedRoute from '@/middleware/ProtectedRoute'
 import LoginPage from '@/pages/LoginPage'
+import NotFoundPage from '@/pages/NotFoundPage'
 import SignupPage from '@/pages/SignupPage'
 import TicketPage from '@/pages/TicketPage'
 import AdminTicketPage from '@/pages/admin/AdminTicketPage'
@@ -29,7 +30,7 @@ const App = () => {
                 <Route path="tickets" element={<AdminTicketPage />} />
               </Route>
             </Route>
-            <Route path="*" element={<Navigate to="/" replace />} />
+            <Route path="*" element={<NotFoundPage />} />
           </Routes>
         </BrowserRouter>
       </AuthProvider>

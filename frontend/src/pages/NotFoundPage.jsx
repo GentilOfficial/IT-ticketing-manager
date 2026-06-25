@@ -1,0 +1,38 @@
+import { Button } from '@/components/ui/button'
+import { ArrowLeft, GlobeX, Home } from 'lucide-react'
+import { Link, useNavigate } from 'react-router'
+
+const NotFoundPage = () => {
+  const navigate = useNavigate()
+
+  return (
+    <main className="flex min-h-screen items-center justify-center bg-background py-12 px-6">
+      <div className="w-full max-w-lg text-center">
+        <div className="mb-6 flex justify-center">
+          <GlobeX className="size-6 text-muted-foreground" />
+        </div>
+        <div className="mb-6 inline-flex items-center rounded-full border px-3 py-1 text-xs text-muted-foreground">
+          404 • Page not found
+        </div>
+        <h1 className="text-4xl font-semibold tracking-tight sm:text-5xl">This page doesn’t exist</h1>
+        <p className="mt-4 text-base leading-relaxed text-muted-foreground">
+          The page you’re looking for may have been moved, deleted, or the link is incorrect.
+        </p>
+        <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
+          <Button variant="outline" size="lg" onClick={() => navigate(-1)}>
+            <ArrowLeft className="mr-2 size-4" />
+            Go back
+          </Button>
+          <Button asChild size="lg">
+            <Link to="/">
+              <Home className="mr-2 size-4" />
+              <span>Homepage</span>
+            </Link>
+          </Button>
+        </div>
+      </div>
+    </main>
+  )
+}
+
+export default NotFoundPage
