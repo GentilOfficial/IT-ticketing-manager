@@ -13,7 +13,7 @@ const getTickets = async (req, res, next) => {
       throw new UserNotFound()
     }
 
-    const tickets = await Ticket.find(user.isAdmin() ? {} : { createdBy: user.id })
+    const tickets = await Ticket.find(user.isAdmin() ? {} : { createdBy: user.id }).populate(['createdBy'])
 
     return sendSuccess(res, { tickets })
   } catch (e) {
