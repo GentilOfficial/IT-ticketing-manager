@@ -14,10 +14,10 @@ import { useAuth } from '@/providers/AuthProvider'
 import { Headset, StickyNotePlus, Ticket, Users } from 'lucide-react'
 import { Link, useLocation } from 'react-router'
 
-const userNavItems = [{ label: 'My Tickets', icon: Ticket, to: '#' }]
+const userNavItems = [{ label: 'My Tickets', icon: Ticket, to: '/tickets' }]
 
 const adminNavItems = [
-  { label: 'Tickets', icon: Ticket, to: '#' },
+  { label: 'Tickets', icon: Ticket, to: '/tickets' },
   { label: 'Users', icon: Users, to: '#' },
 ]
 
