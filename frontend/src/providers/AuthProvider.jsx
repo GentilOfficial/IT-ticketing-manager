@@ -122,7 +122,8 @@ const AuthProvider = ({ children }) => {
       value={{
         user,
         token,
-        isAuthenticated: !!user,
+        isAuthenticated: Boolean(user),
+        isAdmin: user && user.role === 'admin',
         login,
         logout,
         register,
