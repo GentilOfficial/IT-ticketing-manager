@@ -1,7 +1,6 @@
 import { TooltipProvider } from '@/components/ui/tooltip'
 import AuthRoute from '@/middleware/AuthRoute'
 import ProtectedRoute from '@/middleware/ProtectedRoute'
-import HomePage from '@/pages/HomePage'
 import LoginPage from '@/pages/LoginPage'
 import SignupPage from '@/pages/SignupPage'
 import TicketPage from '@/pages/TicketPage'
@@ -15,7 +14,7 @@ const App = () => {
         <BrowserRouter>
           <Routes>
             <Route path="/" element={<ProtectedRoute />}>
-              <Route index element={<HomePage />} />
+              <Route index element={<Navigate to="tickets" replace />} />
               <Route path="tickets" element={<TicketPage />} />
             </Route>
             <Route path="auth" element={<AuthRoute />}>
