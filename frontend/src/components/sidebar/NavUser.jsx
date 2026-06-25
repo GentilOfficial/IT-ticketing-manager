@@ -1,3 +1,4 @@
+import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -9,7 +10,6 @@ import {
 import { SidebarMenuButton, SidebarMenuItem, useSidebar } from '@/components/ui/sidebar'
 import { useAuth } from '@/providers/AuthProvider'
 import { ChevronsUpDown, LogOut } from 'lucide-react'
-import { Avatar, AvatarFallback } from '../ui/avatar'
 
 const NavUser = () => {
   const { logout, user } = useAuth()
