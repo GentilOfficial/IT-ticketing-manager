@@ -17,7 +17,7 @@ import { Link, useLocation } from 'react-router'
 const userNavItems = [{ label: 'My Tickets', icon: Ticket, to: '/tickets' }]
 
 const adminNavItems = [
-  { label: 'Tickets', icon: Ticket, to: '/tickets' },
+  { label: 'Tickets', icon: Ticket, to: '/admin/tickets' },
   { label: 'Users', icon: Users, to: '#' },
 ]
 
