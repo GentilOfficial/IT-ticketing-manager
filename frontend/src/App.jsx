@@ -2,6 +2,7 @@ import { TooltipProvider } from '@/components/ui/tooltip'
 import AuthRoute from '@/middleware/AuthRoute'
 import ProtectedRoute from '@/middleware/ProtectedRoute'
 import LoginPage from '@/pages/LoginPage'
+import NewTicketPage from '@/pages/NewTicketPage'
 import NotFoundPage from '@/pages/NotFoundPage'
 import SignupPage from '@/pages/SignupPage'
 import TicketPage from '@/pages/TicketPage'
@@ -20,12 +21,15 @@ const App = () => {
               <Route path="login" element={<LoginPage />} />
               <Route path="signup" element={<SignupPage />} />
             </Route>
+            <Route element={<ProtectedRoute />}>
+              <Route path="/tickets/new" element={<NewTicketPage />} />
+            </Route>
             <Route element={<ProtectedRoute role="user" />}>
-              <Route path="/" element={<Navigate to="/tickets" replace />} />
-              <Route path="/tickets" element={<TicketPage />} />
+              <Route index element={<Navigate to="tickets" replace />} />
+              <Route path="tickets" element={<TicketPage />} />
             </Route>
             <Route element={<ProtectedRoute role="admin" />}>
-              <Route path="/admin">
+              <Route path="admin">
                 <Route index element={<Navigate to="tickets" replace />} />
                 <Route path="tickets" element={<AdminTicketPage />} />
               </Route>

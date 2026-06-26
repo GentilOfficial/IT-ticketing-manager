@@ -21,7 +21,7 @@ const adminNavItems = [
   { label: 'Users', icon: Users, to: '#' },
 ]
 
-const bottomNavItems = [{ label: 'Open Ticket', icon: StickyNotePlus, to: '#' }]
+const bottomNavItems = [{ label: 'New Ticket', icon: StickyNotePlus, to: '/tickets/new' }]
 
 const AppSidebar = () => {
   const { isAdmin } = useAuth()
@@ -50,7 +50,11 @@ const AppSidebar = () => {
           <SidebarMenu>
             {navItems.map(({ label, icon: Icon, to }, i) => (
               <SidebarMenuItem key={`${label}-${to}-${i}`}>
-                <SidebarMenuButton asChild isActive={pathname.startsWith(to)} tooltip={label}>
+                <SidebarMenuButton
+                  asChild
+                  isActive={pathname.startsWith(to) && !bottomNavItems.some((item) => item.to === pathname)}
+                  tooltip={label}
+                >
                   <Link to={to}>
                     <Icon />
                     <span>{label}</span>
