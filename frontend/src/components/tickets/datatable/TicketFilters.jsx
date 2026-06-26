@@ -4,14 +4,14 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 const TicketFilters = ({ globalFilter, onGlobalFilterChange, statusFilter, onStatusFilterChange }) => (
   <div className="flex gap-2">
     <Input
-      placeholder="Cerca per titolo..."
+      placeholder="Search by title..."
       value={globalFilter}
       onChange={(e) => onGlobalFilterChange(e.target.value)}
       className="max-w-sm"
     />
     <Select value={statusFilter} onValueChange={onStatusFilterChange}>
       <SelectTrigger className="w-44">
-        <SelectValue placeholder="Stato" />
+        <SelectValue placeholder="Status" />
       </SelectTrigger>
       <SelectContent>
         <SelectItem value="all">All Status</SelectItem>

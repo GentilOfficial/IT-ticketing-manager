@@ -1,6 +1,6 @@
-import TicketFilters from '@/components/tickets/TicketFilters'
-import TicketTable from '@/components/tickets/TicketTable'
-import { buildColumns } from '@/components/tickets/columns'
+import TicketFilters from '@/components/tickets/datatable/TicketFilters'
+import TicketTable from '@/components/tickets/datatable/TicketTable'
+import { buildColumns } from '@/components/tickets/datatable/columns'
 import { useAuth } from '@/providers/AuthProvider'
 import {
   getCoreRowModel,
