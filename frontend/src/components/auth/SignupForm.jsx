@@ -1,5 +1,5 @@
-import FormField from '@/components/auth/FormField'
 import PasswordChecklist from '@/components/auth/PasswordChecklist'
+import FormField from '@/components/form/FormField'
 import { Button } from '@/components/ui/button'
 import { Field, FieldDescription, FieldGroup, FieldSeparator } from '@/components/ui/field'
 import { Spinner } from '@/components/ui/spinner'
@@ -86,6 +86,8 @@ const SignupForm = () => {
           onChange={setUserDetailsField}
           errors={fieldErrors}
           disabled={isLoading}
+          minLength={2}
+          maxLength={60}
         />
         <FormField
           name="email"
