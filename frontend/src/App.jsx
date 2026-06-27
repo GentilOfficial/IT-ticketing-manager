@@ -1,3 +1,4 @@
+import { Toaster } from '@/components/ui/sonner'
 import { TooltipProvider } from '@/components/ui/tooltip'
 import AuthRoute from '@/middleware/AuthRoute'
 import ProtectedRoute from '@/middleware/ProtectedRoute'
@@ -13,8 +14,8 @@ import { BrowserRouter, Navigate, Route, Routes } from 'react-router'
 
 const App = () => {
   return (
-    <TooltipProvider>
-      <AuthProvider>
+    <AuthProvider>
+      <TooltipProvider>
         <BrowserRouter>
           <Routes>
             <Route path="auth" element={<AuthRoute />}>
@@ -36,8 +37,9 @@ const App = () => {
             <Route path="*" element={<NotFoundPage />} />
           </Routes>
         </BrowserRouter>
-      </AuthProvider>
-    </TooltipProvider>
+      </TooltipProvider>
+      <Toaster />
+    </AuthProvider>
   )
 }
 
