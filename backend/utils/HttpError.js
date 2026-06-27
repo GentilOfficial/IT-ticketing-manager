@@ -53,6 +53,12 @@ class UnauthorizedUser extends HttpError {
   }
 }
 
+class TicketStatusUnauthorizedUser extends HttpError {
+  constructor() {
+    super(403, 'You are not authorized to change the ticket status.')
+  }
+}
+
 class TicketNotFound extends HttpError {
   constructor() {
     super(404, 'Ticket not found.')
@@ -82,6 +88,7 @@ module.exports = {
   InvalidToken,
   UserNotFound,
   UnauthorizedUser,
+  TicketStatusUnauthorizedUser,
   TicketNotFound,
   ValidationError,
   InvalidObjectId,

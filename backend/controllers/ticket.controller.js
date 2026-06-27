@@ -1,6 +1,12 @@
 const User = require('../models/User')
 const Ticket = require('../models/Ticket')
-const { UserNotFound, MissingFields, TicketNotFound, UnauthorizedUser } = require('../utils/HttpError')
+const {
+  UserNotFound,
+  MissingFields,
+  TicketNotFound,
+  UnauthorizedUser,
+  TicketStatusUnauthorizedUser,
+} = require('../utils/HttpError')
 const { sendSuccess } = require('../utils/responses')
 
 const getTickets = async (req, res, next) => {
@@ -92,6 +98,7 @@ const editTicketDetails = async (req, res, next) => {
     if (description) ticket.description = description
 
     if (status) {
+      if (!user.isAdmin()) throw new TicketStatusUnauthorizedUser()
       await ticket.changeStatus(status)
     } else {
       await ticket.save()
