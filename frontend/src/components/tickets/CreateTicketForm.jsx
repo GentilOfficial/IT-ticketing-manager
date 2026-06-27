@@ -1,8 +1,10 @@
 import FormField from '@/components/form/FormField'
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardFooter } from '@/components/ui/card'
+import { Spinner } from '@/components/ui/spinner'
 import { useAuth } from '@/providers/AuthProvider'
-import { ArrowLeft, Eraser, Send } from 'lucide-react'
+import { AlertCircle, ArrowLeft, Eraser, Send, TicketCheck } from 'lucide-react'
 import { useState } from 'react'
 import { Link } from 'react-router'
 
@@ -56,7 +58,8 @@ const CreateTicketForm = () => {
       if (!data.success) {
         setErrors(data.errors || data.message || 'Unable to create ticket. Please try again.')
       } else {
-        setSuccess(`Ticket created successfully. Ticket ID: ${data.ticket._id}`)
+        setSuccess(`Your ticket has been created. Ticket ID: ${data.ticket._id}`)
+        resetFormFields()
       }
     } catch (err) {
       console.error('An error occurred during registration:', err)
@@ -66,8 +69,8 @@ const CreateTicketForm = () => {
     }
   }
 
-  const generalError = typeof errors === 'string' ? errors : null
   const fieldErrors = Array.isArray(errors) ? errors : []
+  const formError = typeof errors === 'string' ? errors : null
 
   return (
     <form onSubmit={submitTicketForm}>
@@ -100,15 +103,27 @@ const CreateTicketForm = () => {
               maxLength={DESCRIPTION_LENGTH.max}
               className="min-h-44"
             />
-            {generalError && <p className="text-sm text-destructive">{generalError}</p>}
-            {success && <p className="text-sm text-green-600">{success}</p>}
+            {formError && (
+              <Alert variant="destructive">
+                <AlertCircle />
+                <AlertTitle>Unable to create ticket</AlertTitle>
+                <AlertDescription>{formError}</AlertDescription>
+              </Alert>
+            )}
+            {success && (
+              <Alert>
+                <TicketCheck />
+                <AlertTitle>Ticket created successfully</AlertTitle>
+                <AlertDescription>{success}</AlertDescription>
+              </Alert>
+            )}
           </div>
         </CardContent>
         <CardFooter className="flex flex-wrap items-center justify-between gap-2">
           <Button variant="outline" asChild disabled={isLoading}>
             <Link to="/">
               <ArrowLeft />
-              <span>Torna alla home</span>
+              <span>Back Homepage</span>
             </Link>
           </Button>
           <Button type="button" variant="outline" className="ml-auto" onClick={resetFormFields} disabled={isLoading}>
@@ -116,8 +131,8 @@ const CreateTicketForm = () => {
             <span>Reset</span>
           </Button>
           <Button type="submit" className="w-full md:w-fit" disabled={!canSubmitForm || isLoading}>
-            <Send />
-            <span>Invia ticket</span>
+            {isLoading ? <Spinner /> : <Send />}
+            <span>Send ticket</span>
           </Button>
         </CardFooter>
       </Card>
