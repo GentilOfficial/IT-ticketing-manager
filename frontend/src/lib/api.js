@@ -27,5 +27,7 @@ export const createTicket = (ticket, authToken) => request('/api/tickets', { met
 export const getTicketById = (ticketId, authToken) => request(`/api/tickets/${ticketId}`, { authToken })
 export const updateTicketStatus = (ticketId, status, authToken) =>
   request(`/api/tickets/${ticketId}`, { method: 'PUT', body: { status }, authToken })
+export const editTicket = (ticketId, edits, authToken) =>
+  request(`/api/tickets/${ticketId}`, { method: 'PUT', body: edits, authToken })
 
 export default request

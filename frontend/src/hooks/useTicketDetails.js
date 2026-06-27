@@ -33,6 +33,10 @@ const useTicketDetails = (ticketId, token) => {
     initTicket()
   }, [ticketId, token])
 
+  const handleTicketUpdated = (updatedTicket) => {
+    setTicket({ ...updatedTicket, createdBy: ticket.createdBy })
+  }
+
   const changeTicketStatus = async (newStatus) => {
     if (!ticket) return
 
@@ -46,7 +50,7 @@ const useTicketDetails = (ticketId, token) => {
         setTicketStatus(previousStatus)
         toast.error(data.message || 'Error during ticket status change.', { position: 'top-center' })
       } else {
-        setTicket({ ...data.ticket, createdBy: ticket.createdBy })
+        handleTicketUpdated(data.ticket)
         setTicketStatus(data.ticket.status)
         toast.success('Ticket status changed successfully.', { position: 'top-center' })
       }
@@ -57,7 +61,7 @@ const useTicketDetails = (ticketId, token) => {
     }
   }
 
-  return { ticket, isLoading, error, ticketStatus, changeTicketStatus }
+  return { ticket, isLoading, error, ticketStatus, changeTicketStatus, handleTicketUpdated }
 }
 
 export default useTicketDetails

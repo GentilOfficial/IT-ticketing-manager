@@ -3,13 +3,10 @@ import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardFooter } from '@/components/ui/card'
 import { Spinner } from '@/components/ui/spinner'
-import useTicketForm from '@/hooks/useTicketForm'
+import useTicketForm, { TICKET_DESCRIPTION_LENGTH, TICKET_TITLE_LENGTH } from '@/hooks/useTicketForm'
 import { useAuth } from '@/providers/AuthProvider'
 import { AlertCircle, ArrowLeft, Eraser, Send, TicketCheck } from 'lucide-react'
 import { Link } from 'react-router'
-
-const TITLE_LENGTH = { min: 5, max: 120 }
-const DESCRIPTION_LENGTH = { min: 10, max: 4000 }
 
 const CreateTicketForm = () => {
   const { token } = useAuth()
@@ -35,8 +32,8 @@ const CreateTicketForm = () => {
               onChange={onChangeSetTicketField}
               errors={fieldErrors}
               disabled={isLoading}
-              minLength={TITLE_LENGTH.min}
-              maxLength={TITLE_LENGTH.max}
+              minLength={TICKET_TITLE_LENGTH.min}
+              maxLength={TICKET_TITLE_LENGTH.max}
             />
             <FormField
               name="description"
@@ -48,8 +45,8 @@ const CreateTicketForm = () => {
               onChange={onChangeSetTicketField}
               errors={fieldErrors}
               disabled={isLoading}
-              minLength={DESCRIPTION_LENGTH.min}
-              maxLength={DESCRIPTION_LENGTH.max}
+              minLength={TICKET_DESCRIPTION_LENGTH.min}
+              maxLength={TICKET_DESCRIPTION_LENGTH.max}
               className="min-h-44"
             />
             {formError && (
