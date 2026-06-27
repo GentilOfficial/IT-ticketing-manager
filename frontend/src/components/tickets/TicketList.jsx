@@ -1,6 +1,7 @@
 import TicketFilters from '@/components/tickets/datatable/TicketFilters'
 import TicketTable from '@/components/tickets/datatable/TicketTable'
 import { buildColumns } from '@/components/tickets/datatable/columns'
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { useAuth } from '@/providers/AuthProvider'
 import {
   getCoreRowModel,
@@ -9,6 +10,7 @@ import {
   getSortedRowModel,
   useReactTable,
 } from '@tanstack/react-table'
+import { AlertTriangle } from 'lucide-react'
 import { useEffect, useState } from 'react'
 
 const TicketList = () => {
@@ -32,10 +34,14 @@ const TicketList = () => {
           },
         })
         const data = await res.json()
-        if (!data.success) throw new Error(data.message || 'Error during ticket loading.')
-        setTickets(data.tickets)
+        if (!data.success) {
+          setError(data.message || 'Error during tickets loading.')
+        } else {
+          setTickets(data.tickets)
+        }
       } catch (err) {
-        setError(err.message)
+        console.error('An error occurred during tickets loading:', err)
+        setError('Network error. Please check your internet connection.')
       } finally {
         setIsLoading(false)
       }
@@ -68,7 +74,14 @@ const TicketList = () => {
     initialState: { pagination: { pageSize: 8 } },
   })
 
-  if (error) return <div className="flex items-center justify-center h-48 text-sm text-destructive">{error}</div>
+  if (error)
+    return (
+      <Alert variant="destructive" className="max-w-md">
+        <AlertTriangle />
+        <AlertTitle>Errore during tickets loading</AlertTitle>
+        <AlertDescription>{error}</AlertDescription>
+      </Alert>
+    )
 
   return (
     <div className="flex flex-col gap-6">

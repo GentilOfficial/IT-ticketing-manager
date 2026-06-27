@@ -59,7 +59,7 @@ export const buildColumns = ({ isAdmin }) => [
     header: ({ column }) => <SortableHeader column={column} label="Title" />,
     cell: ({ getValue, row }) => (
       <Link
-        to={`/tickets/${row.original._id}`}
+        to={`/${isAdmin ? 'admin/' : ''}tickets/${row.original._id}`}
         className="font-medium text-sm text-left hover:underline underline-offset-2"
       >
         {getValue()}
