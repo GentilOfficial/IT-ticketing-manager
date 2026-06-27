@@ -11,7 +11,7 @@ import {
   SidebarMenuItem,
 } from '@/components/ui/sidebar'
 import { useAuth } from '@/providers/AuthProvider'
-import { Headset, Ticket, TicketPlus, Users } from 'lucide-react'
+import { Headset, Ticket, TicketPlus } from 'lucide-react'
 import { Link, useLocation } from 'react-router'
 
 const userNavItems = [
@@ -19,10 +19,7 @@ const userNavItems = [
   { label: 'New Ticket', icon: TicketPlus, to: '/new/ticket' },
 ]
 
-const adminNavItems = [
-  { label: 'Tickets', icon: Ticket, to: '/admin/tickets' },
-  { label: 'Users', icon: Users, to: '#' },
-]
+const adminNavItems = [{ label: 'Tickets', icon: Ticket, to: '/admin/tickets' }]
 
 const AppSidebar = () => {
   const { isAdmin } = useAuth()

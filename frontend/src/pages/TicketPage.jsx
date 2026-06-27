@@ -13,7 +13,7 @@ const TicketPage = () => {
           <p className="leading-7 text-muted-foreground">Check out and manage all your issues</p>
         </div>
         <Button asChild>
-          <Link to="/tickets/new">
+          <Link to="/new/ticket">
             <Plus />
             New Ticket
           </Link>

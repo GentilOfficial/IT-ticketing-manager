@@ -21,18 +21,14 @@ const App = () => {
               <Route path="login" element={<LoginPage />} />
               <Route path="signup" element={<SignupPage />} />
             </Route>
-            <Route element={<ProtectedRoute />}>
-              <Route path="/new/ticket" element={<NewTicketPage />} />
-            </Route>
             <Route element={<ProtectedRoute role="user" />}>
               <Route index element={<Navigate to="tickets" replace />} />
               <Route path="tickets" element={<TicketPage />} />
+              <Route path="/new/ticket" element={<NewTicketPage />} />
             </Route>
-            <Route element={<ProtectedRoute role="admin" />}>
-              <Route path="admin">
-                <Route index element={<Navigate to="tickets" replace />} />
-                <Route path="tickets" element={<AdminTicketPage />} />
-              </Route>
+            <Route path="admin" element={<ProtectedRoute role="admin" />}>
+              <Route index element={<Navigate to="tickets" replace />} />
+              <Route path="tickets" element={<AdminTicketPage />} />
             </Route>
             <Route path="*" element={<NotFoundPage />} />
           </Routes>
