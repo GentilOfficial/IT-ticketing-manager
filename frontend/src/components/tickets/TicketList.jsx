@@ -30,7 +30,7 @@ const TicketList = () => {
 
   const resetFilters = () => {
     setGlobalFilter('')
-    setStatusFilter('all')
+    handleStatusFilterChange('all')
   }
 
   const columns = buildColumns({ isAdmin })
