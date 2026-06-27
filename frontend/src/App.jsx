@@ -22,7 +22,7 @@ const App = () => {
               <Route path="signup" element={<SignupPage />} />
             </Route>
             <Route element={<ProtectedRoute />}>
-              <Route path="/tickets/new" element={<NewTicketPage />} />
+              <Route path="/new/ticket" element={<NewTicketPage />} />
             </Route>
             <Route element={<ProtectedRoute role="user" />}>
               <Route index element={<Navigate to="tickets" replace />} />

@@ -11,17 +11,18 @@ import {
   SidebarMenuItem,
 } from '@/components/ui/sidebar'
 import { useAuth } from '@/providers/AuthProvider'
-import { Headset, StickyNotePlus, Ticket, Users } from 'lucide-react'
+import { Headset, Ticket, TicketPlus, Users } from 'lucide-react'
 import { Link, useLocation } from 'react-router'
 
-const userNavItems = [{ label: 'My Tickets', icon: Ticket, to: '/tickets' }]
+const userNavItems = [
+  { label: 'My Tickets', icon: Ticket, to: '/tickets' },
+  { label: 'New Ticket', icon: TicketPlus, to: '/new/ticket' },
+]
 
 const adminNavItems = [
   { label: 'Tickets', icon: Ticket, to: '/admin/tickets' },
   { label: 'Users', icon: Users, to: '#' },
 ]
-
-const bottomNavItems = [{ label: 'New Ticket', icon: StickyNotePlus, to: '/tickets/new' }]
 
 const AppSidebar = () => {
   const { isAdmin } = useAuth()
@@ -43,34 +44,13 @@ const AppSidebar = () => {
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarHeader>
-
       <SidebarContent>
         <SidebarGroup>
           <SidebarGroupLabel>{isAdmin ? 'Administration' : 'Menu'}</SidebarGroupLabel>
           <SidebarMenu>
             {navItems.map(({ label, icon: Icon, to }, i) => (
               <SidebarMenuItem key={`${label}-${to}-${i}`}>
-                <SidebarMenuButton
-                  asChild
-                  isActive={pathname.startsWith(to) && !bottomNavItems.some((item) => item.to === pathname)}
-                  tooltip={label}
-                >
-                  <Link to={to}>
-                    <Icon />
-                    <span>{label}</span>
-                  </Link>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-            ))}
-          </SidebarMenu>
-        </SidebarGroup>
-
-        <SidebarGroup className="mt-auto">
-          <SidebarGroupLabel>General</SidebarGroupLabel>
-          <SidebarMenu>
-            {bottomNavItems.map(({ label, icon: Icon, to }, i) => (
-              <SidebarMenuItem key={`${label}-${to}-${i}`}>
-                <SidebarMenuButton asChild isActive={pathname === to} tooltip={label}>
+                <SidebarMenuButton asChild isActive={pathname.startsWith(to)} tooltip={label}>
                   <Link to={to}>
                     <Icon />
                     <span>{label}</span>
