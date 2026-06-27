@@ -48,6 +48,11 @@ const TicketList = () => {
     table.getColumn('status')?.setFilterValue(val === 'all' ? '' : val)
   }
 
+  const resetFilters = () => {
+    setGlobalFilter('')
+    setStatusFilter('all')
+  }
+
   const columns = buildColumns({ isAdmin })
 
   const table = useReactTable({
@@ -73,7 +78,7 @@ const TicketList = () => {
         statusFilter={statusFilter}
         onStatusFilterChange={handleStatusFilterChange}
       />
-      <TicketTable table={table} columns={columns} isLoading={isLoading} />
+      <TicketTable table={table} columns={columns} isLoading={isLoading} resetFilters={resetFilters} />
     </div>
   )
 }

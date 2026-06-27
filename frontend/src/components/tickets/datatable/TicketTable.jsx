@@ -1,8 +1,9 @@
+import EmptyTickets from '@/components/empty/EmptyTickets'
 import { Button } from '@/components/ui/button'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { flexRender } from '@tanstack/react-table'
 
-const TicketTable = ({ table, columns, isLoading }) => (
+const TicketTable = ({ table, columns, isLoading, resetFilters }) => (
   <>
     <div className="rounded-md border">
       <Table>
@@ -36,8 +37,8 @@ const TicketTable = ({ table, columns, isLoading }) => (
             ))
           ) : (
             <TableRow>
-              <TableCell colSpan={columns.length} className="h-32 text-center text-muted-foreground text-sm">
-                No tickets found
+              <TableCell colSpan={columns.length} className="py-12">
+                <EmptyTickets resetFilters={resetFilters} />
               </TableCell>
             </TableRow>
           )}
