@@ -1,3 +1,4 @@
+import { getCurrentUser, login as loginRequest, register as registerRequest } from '@/lib/api'
 import { createContext, useContext, useEffect, useState } from 'react'
 
 export const AuthContext = createContext({})
@@ -12,14 +13,7 @@ const AuthProvider = ({ children }) => {
 
   const fetchUser = async (authToken) => {
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_SERVER}/api/auth/me`, {
-        method: 'GET',
-        headers: {
-          Authorization: authToken,
-        },
-      })
-
-      const data = await response.json()
+      const data = await getCurrentUser(authToken)
 
       if (!data.success) {
         throw new Error(data.message || 'Session expired. Please login again.')
@@ -38,17 +32,8 @@ const AuthProvider = ({ children }) => {
 
   const login = async (credentials) => {
     setErrors(null)
-
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_SERVER}/api/auth/login`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(credentials),
-      })
-
-      const data = await response.json()
+      const data = await loginRequest(credentials)
 
       if (!data.success) {
         setErrors(data.errors || data.message || 'Incorrect email or password.')
@@ -68,15 +53,7 @@ const AuthProvider = ({ children }) => {
   const register = async (userDetails) => {
     setErrors(null)
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_SERVER}/api/auth/register`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(userDetails),
-      })
-
-      const data = await response.json()
+      const data = await registerRequest(userDetails)
 
       if (!data.success) {
         setErrors(data.errors || data.message || 'Unable to create account. Please try again.')

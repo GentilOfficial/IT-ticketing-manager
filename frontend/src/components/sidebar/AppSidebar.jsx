@@ -14,18 +14,19 @@ import { useAuth } from '@/providers/AuthProvider'
 import { Headset, Ticket, TicketPlus } from 'lucide-react'
 import { Link, useLocation } from 'react-router'
 
-const userNavItems = [
-  { label: 'My Tickets', icon: Ticket, to: '/tickets' },
-  { label: 'New Ticket', icon: TicketPlus, to: '/new/ticket' },
-]
-
-const adminNavItems = [{ label: 'Tickets', icon: Ticket, to: '/admin/tickets' }]
+export const SIDEBAR_ITEMS = {
+  user: [
+    { label: 'My Tickets', icon: Ticket, to: '/tickets' },
+    { label: 'New Ticket', icon: TicketPlus, to: '/new/ticket' },
+  ],
+  admin: [{ label: 'Tickets', icon: Ticket, to: '/admin/tickets' }],
+}
 
 const AppSidebar = () => {
   const { isAdmin } = useAuth()
   const { pathname } = useLocation()
 
-  const navItems = isAdmin ? adminNavItems : userNavItems
+  const navItems = isAdmin ? SIDEBAR_ITEMS.admin : SIDEBAR_ITEMS.user
 
   return (
     <Sidebar collapsible="icon">

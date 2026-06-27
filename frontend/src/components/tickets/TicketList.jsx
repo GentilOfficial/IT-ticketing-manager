@@ -2,6 +2,7 @@ import TicketFilters from '@/components/tickets/datatable/TicketFilters'
 import TicketTable from '@/components/tickets/datatable/TicketTable'
 import { buildColumns } from '@/components/tickets/datatable/columns'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
+import useTickets from '@/hooks/useTickets'
 import { useAuth } from '@/providers/AuthProvider'
 import {
   getCoreRowModel,
@@ -11,43 +12,16 @@ import {
   useReactTable,
 } from '@tanstack/react-table'
 import { AlertTriangle } from 'lucide-react'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 
 const TicketList = () => {
   const { token, isAdmin } = useAuth()
 
-  const [tickets, setTickets] = useState([])
-  const [isLoading, setIsLoading] = useState(true)
-  const [error, setError] = useState(null)
   const [globalFilter, setGlobalFilter] = useState('')
   const [statusFilter, setStatusFilter] = useState('all')
   const [sorting, setSorting] = useState([])
 
-  useEffect(() => {
-    const fetchTickets = async () => {
-      try {
-        setIsLoading(true)
-        const res = await fetch(`${import.meta.env.VITE_API_SERVER}/api/tickets`, {
-          method: 'GET',
-          headers: {
-            Authorization: token,
-          },
-        })
-        const data = await res.json()
-        if (!data.success) {
-          setError(data.message || 'Error during tickets loading.')
-        } else {
-          setTickets(data.tickets)
-        }
-      } catch (err) {
-        console.error('An error occurred during tickets loading:', err)
-        setError('Network error. Please check your internet connection.')
-      } finally {
-        setIsLoading(false)
-      }
-    }
-    fetchTickets()
-  }, [])
+  const { tickets, isLoading, error } = useTickets(token)
 
   const handleStatusFilterChange = (val) => {
     setStatusFilter(val)
@@ -71,7 +45,7 @@ const TicketList = () => {
     getSortedRowModel: getSortedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
-    initialState: { pagination: { pageSize: 8 } },
+    initialState: { pagination: { pageSize: 12 } },
   })
 
   if (error)

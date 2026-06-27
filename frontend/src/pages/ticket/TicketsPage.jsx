@@ -1,24 +1,30 @@
+import PageHeader from '@/components/shared/PageHeader'
 import TicketList from '@/components/tickets/TicketList'
 import { Button } from '@/components/ui/button'
 import AppLayout from '@/layouts/AppLayout'
+import { useAuth } from '@/providers/AuthProvider'
 import { Plus } from 'lucide-react'
 import { Link } from 'react-router'
 
 const TicketsPage = () => {
+  const { isAdmin } = useAuth()
+
   return (
     <AppLayout>
-      <div className="flex flex-col sm:flex-row align-center justify-between gap-2 mb-6">
-        <div>
-          <h2 className="scroll-m-20 text-3xl font-semibold tracking-tight first:mt-0">My Tickets</h2>
-          <p className="leading-7 text-muted-foreground">Check out and manage all your issues</p>
-        </div>
-        <Button asChild>
-          <Link to="/new/ticket">
-            <Plus />
-            New Ticket
-          </Link>
-        </Button>
-      </div>
+      <PageHeader
+        title={isAdmin ? 'All Tickets' : 'My Tickets'}
+        description={isAdmin ? 'Check out and manage all the issues' : 'Check out and manage all your issues'}
+        actions={
+          !isAdmin && (
+            <Button asChild>
+              <Link to="/new/ticket">
+                <Plus />
+                New Ticket
+              </Link>
+            </Button>
+          )
+        }
+      />
       <TicketList />
     </AppLayout>
   )

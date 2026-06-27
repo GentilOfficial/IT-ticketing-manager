@@ -3,9 +3,9 @@ import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardFooter } from '@/components/ui/card'
 import { Spinner } from '@/components/ui/spinner'
+import useTicketForm from '@/hooks/useTicketForm'
 import { useAuth } from '@/providers/AuthProvider'
 import { AlertCircle, ArrowLeft, Eraser, Send, TicketCheck } from 'lucide-react'
-import { useState } from 'react'
 import { Link } from 'react-router'
 
 const TITLE_LENGTH = { min: 5, max: 120 }
@@ -13,61 +13,10 @@ const DESCRIPTION_LENGTH = { min: 10, max: 4000 }
 
 const CreateTicketForm = () => {
   const { token } = useAuth()
-  const [ticket, setTicket] = useState({
-    title: '',
-    description: '',
-  })
-  const [isLoading, setIsLoading] = useState(false)
-  const [errors, setErrors] = useState(null)
-  const [success, setSuccess] = useState(null)
+  const { ticket, isLoading, errors, success, onChangeSetTicketField, resetFormFields, submitTicketForm } =
+    useTicketForm(token)
 
   const canSubmitForm = Object.values(ticket).every(Boolean)
-
-  const onChangeSetTicketField = (e) => {
-    const { name, value } = e.target
-    setTicket({
-      ...ticket,
-      [name]: value,
-    })
-  }
-
-  const resetFormFields = () => {
-    setTicket({
-      title: '',
-      description: '',
-    })
-  }
-
-  const submitTicketForm = async (e) => {
-    e.preventDefault()
-    setErrors(null)
-    setSuccess(null)
-    setIsLoading(true)
-    try {
-      const response = await fetch(`${import.meta.env.VITE_API_SERVER}/api/tickets`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: token,
-        },
-        body: JSON.stringify(ticket),
-      })
-
-      const data = await response.json()
-
-      if (!data.success) {
-        setErrors(data.errors || data.message || 'Unable to create ticket. Please try again.')
-      } else {
-        setSuccess(`Your ticket has been created. Ticket ID: ${data.ticket._id}`)
-        resetFormFields()
-      }
-    } catch (err) {
-      console.error('An error occurred during registration:', err)
-      setErrors('Network error. Please check your internet connection.')
-    } finally {
-      setIsLoading(false)
-    }
-  }
 
   const fieldErrors = Array.isArray(errors) ? errors : []
   const formError = typeof errors === 'string' ? errors : null
