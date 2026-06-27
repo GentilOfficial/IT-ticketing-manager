@@ -1,7 +1,7 @@
 import TicketList from '@/components/tickets/TicketList'
 import AppLayout from '@/layouts/AppLayout'
 
-const AdminTicketPage = () => {
+const AdminTicketsPage = () => {
   return (
     <AppLayout>
       <div className="mb-6">
@@ -13,4 +13,4 @@ const AdminTicketPage = () => {
   )
 }
 
-export default AdminTicketPage
+export default AdminTicketsPage

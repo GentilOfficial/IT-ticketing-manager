@@ -4,7 +4,7 @@ import AppLayout from '@/layouts/AppLayout'
 import { Plus } from 'lucide-react'
 import { Link } from 'react-router'
 
-const TicketPage = () => {
+const TicketsPage = () => {
   return (
     <AppLayout>
       <div className="flex flex-col sm:flex-row align-center justify-between gap-2 mb-6">
@@ -24,4 +24,4 @@ const TicketPage = () => {
   )
 }
 
-export default TicketPage
+export default TicketsPage
