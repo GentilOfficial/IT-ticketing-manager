@@ -11,21 +11,25 @@ const AuthProvider = ({ children }) => {
   const [errors, setErrors] = useState(null)
   const [isLoading, setIsLoading] = useState(true)
 
+  const logout = () => {
+    setUser(null)
+    setToken(null)
+    localStorage.removeItem(TOKEN_KEY)
+  }
+
   const fetchUser = async (authToken) => {
     try {
       const data = await getCurrentUser(authToken)
 
       if (!data.success) {
-        throw new Error(data.message || 'Session expired. Please login again.')
+        logout()
+        return false
       }
 
       setUser(data.user)
       return true
     } catch (e) {
       console.error('Invalid or expired token:', e)
-      setUser(null)
-      setToken(null)
-      localStorage.removeItem(TOKEN_KEY)
       return false
     }
   }
@@ -68,12 +72,6 @@ const AuthProvider = ({ children }) => {
       console.error('An error occurred during registration:', e)
       setErrors('Network error. Please check your internet connection.')
     }
-  }
-
-  const logout = () => {
-    setUser(null)
-    setToken(null)
-    localStorage.removeItem(TOKEN_KEY)
   }
 
   useEffect(() => {
