@@ -1,6 +1,6 @@
 const User = require('../models/User')
 const { generateToken } = require('../utils/generateToken')
-const { MissingFields, InvalidCredentials, UserNotFound } = require('../utils/HttpError')
+const { MissingFields, InvalidCredentials, UserNotFound, AuthenticatedUserNotFound } = require('../utils/HttpError')
 const { sendSuccess } = require('../utils/responses')
 
 const register = async (req, res, next) => {
@@ -65,7 +65,7 @@ const loggedUser = async (req, res, next) => {
     const user = await User.findById(jwtUser.user_id)
 
     if (!user) {
-      throw new UserNotFound()
+      throw new AuthenticatedUserNotFound()
     }
 
     return sendSuccess(res, { user }, 201)
