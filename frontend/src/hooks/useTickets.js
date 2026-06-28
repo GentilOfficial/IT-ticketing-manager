@@ -3,10 +3,17 @@ import { useEffect, useState } from 'react'
 
 const useTickets = (token) => {
   const [tickets, setTickets] = useState([])
-  const [isLoading, setIsLoading] = useState(true)
+  const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState(null)
 
   const refreshTickets = async () => {
+    if (!token) {
+      setTickets([])
+      setError(null)
+      setIsLoading(false)
+      return
+    }
+
     try {
       setIsLoading(true)
       setError(null)
@@ -16,11 +23,12 @@ const useTickets = (token) => {
         setError(data.message || 'Error during tickets loading.')
         setTickets([])
       } else {
-        setTickets(data.tickets)
+        setTickets(Array.isArray(data.tickets) ? data.tickets : [])
       }
     } catch (err) {
       console.error('An error occurred during tickets loading:', err)
       setError('Network error. Please check your internet connection.')
+      setTickets([])
     } finally {
       setIsLoading(false)
     }

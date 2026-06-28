@@ -78,7 +78,9 @@ const useTicketDetails = (ticketId, token) => {
       } else {
         handleTicketUpdated(data.ticket)
         setAssignedTo(data.ticket.assignedTo._id)
-        toast.success(`Ticket assigned to ${data.ticket.assignedTo.name}`, { position: 'top-center' })
+        toast.success(`Ticket assigned to the selected admin: ${data.ticket.assignedTo.name}`, {
+          position: 'top-center',
+        })
       }
     } catch (e) {
       console.error('Error during ticket assignment:', e)

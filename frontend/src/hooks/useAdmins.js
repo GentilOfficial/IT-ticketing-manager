@@ -1,13 +1,19 @@
 import { getAdminUsers } from '@/lib/api'
 import { useEffect, useState } from 'react'
-import { toast } from 'sonner'
 
-const useAdmins = (token, enabled) => {
+const useAdmins = (token, enabled = true) => {
   const [admins, setAdmins] = useState([])
-  const [isLoading, setIsLoading] = useState(true)
+  const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState(null)
 
   const refreshAdmins = async () => {
+    if (!token || !enabled) {
+      setAdmins([])
+      setError(null)
+      setIsLoading(false)
+      return
+    }
+
     try {
       setIsLoading(true)
       setError(null)
@@ -18,25 +24,23 @@ const useAdmins = (token, enabled) => {
           ? `Error during admins loading: ${data.message}`
           : 'Error during admins loading'
         setError(errorMessage)
-        toast.error(errorMessage, { position: 'top-center' })
         setAdmins([])
       } else {
-        setAdmins(data.users)
-        toast.success('Admins loaded successfully', { position: 'top-center' })
+        setAdmins(Array.isArray(data.users) ? data.users : [])
       }
     } catch (err) {
       console.error('An error occurred during admins loading:', err)
       const errorMessage = 'Error during admins loading: Network error. Please check your internet connection.'
       setError(errorMessage)
-      toast.error(errorMessage, { position: 'top-center' })
+      setAdmins([])
     } finally {
       setIsLoading(false)
     }
   }
 
   useEffect(() => {
-    if (enabled) refreshAdmins()
-  }, [token])
+    refreshAdmins()
+  }, [token, enabled])
 
   return { admins, isLoading, error, refreshAdmins }
 }
