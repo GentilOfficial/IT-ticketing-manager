@@ -1,24 +1,11 @@
 const User = require('../models/User')
 const Ticket = require('../models/Ticket')
-const {
-  UserNotFound,
-  MissingFields,
-  TicketNotFound,
-  UnauthorizedUser,
-  UnauthorizedTicketEdit,
-  AuthenticatedUserNotFound,
-} = require('../utils/HttpError')
+const { UserNotFound, MissingFields, UnauthorizedTicketEdit } = require('../utils/HttpError')
 const { sendSuccess } = require('../utils/responses')
 
 const getTickets = async (req, res, next) => {
   try {
-    const { jwtUser } = req
-
-    const user = await User.findById(jwtUser.user_id)
-
-    if (!user) {
-      throw new AuthenticatedUserNotFound()
-    }
+    const { user } = req
 
     const tickets = await Ticket.find(user.isAdmin() ? {} : { createdBy: user.id })
 
@@ -30,18 +17,11 @@ const getTickets = async (req, res, next) => {
 
 const createTicket = async (req, res, next) => {
   try {
-    const { jwtUser } = req
-
-    const { title, description } = req.body
+    const { user, body } = req
+    const { title, description } = body
 
     if (!title || !description) {
       throw new MissingFields()
-    }
-
-    const user = await User.findById(jwtUser.user_id)
-
-    if (!user) {
-      throw new AuthenticatedUserNotFound()
     }
 
     const ticket = new Ticket({ title, description, createdBy: user.id })
@@ -55,23 +35,7 @@ const createTicket = async (req, res, next) => {
 
 const getTicketDetails = async (req, res, next) => {
   try {
-    const { params, jwtUser } = req
-
-    const ticket = await Ticket.findById(params.id)
-
-    if (!ticket) {
-      throw new TicketNotFound()
-    }
-
-    const user = await User.findById(jwtUser.user_id)
-
-    if (!user) {
-      throw new AuthenticatedUserNotFound()
-    }
-
-    if (!user.isAdmin() && ticket.createdBy.id !== user.id) {
-      throw new UnauthorizedUser()
-    }
+    const { ticket } = req
 
     return sendSuccess(res, { ticket })
   } catch (e) {
@@ -81,25 +45,8 @@ const getTicketDetails = async (req, res, next) => {
 
 const editTicketDetails = async (req, res, next) => {
   try {
-    const { params, jwtUser } = req
-
-    const ticket = await Ticket.findById(params.id)
-
-    if (!ticket) {
-      throw new TicketNotFound()
-    }
-
-    const user = await User.findById(jwtUser.user_id)
-
-    if (!user) {
-      throw new AuthenticatedUserNotFound()
-    }
-
-    if (!user.isAdmin() && !ticket.createdBy.equals(user.id)) {
-      throw new UnauthorizedUser()
-    }
-
-    const { title, description, status, assignedTo } = req.body
+    const { user, ticket, body } = req
+    const { title, description, status, assignedTo } = body
 
     if (title) ticket.title = title
     if (description) ticket.description = description

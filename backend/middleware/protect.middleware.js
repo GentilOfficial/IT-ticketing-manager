@@ -1,5 +1,6 @@
 const { verify, JsonWebTokenError } = require('jsonwebtoken')
-const { InvalidToken, MissingToken } = require('../utils/HttpError')
+const { InvalidToken, MissingToken, AuthenticatedUserNotFound } = require('../utils/HttpError')
+const User = require('../models/User')
 
 const PUBLIC_ROUTES = [
   { path: '/api/auth/register', method: 'POST' },
@@ -18,7 +19,15 @@ const protectRoutes = async (req, res, next) => {
       throw new MissingToken()
     }
 
-    req.jwtUser = verify(token, process.env.JWT_SIGN_SECRET)
+    const jwtUser = verify(token, process.env.JWT_SIGN_SECRET)
+
+    const user = await User.findById(jwtUser.user_id)
+
+    if (!user) {
+      throw new AuthenticatedUserNotFound()
+    }
+
+    req.user = user
 
     return next()
   } catch (e) {
