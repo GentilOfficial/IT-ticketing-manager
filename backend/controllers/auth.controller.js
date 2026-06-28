@@ -61,12 +61,7 @@ const login = async (req, res, next) => {
 
 const loggedUser = async (req, res, next) => {
   try {
-    const { jwtUser } = req
-    const user = await User.findById(jwtUser.user_id)
-
-    if (!user) {
-      throw new AuthenticatedUserNotFound()
-    }
+    const { user } = req
 
     return sendSuccess(res, { user }, 201)
   } catch (e) {
