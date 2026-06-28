@@ -20,7 +20,7 @@ const getTickets = async (req, res, next) => {
       throw new AuthenticatedUserNotFound()
     }
 
-    const tickets = await Ticket.find(user.isAdmin() ? {} : { createdBy: user.id }).populate(['createdBy'])
+    const tickets = await Ticket.find(user.isAdmin() ? {} : { createdBy: user.id })
 
     return sendSuccess(res, { tickets })
   } catch (e) {
@@ -57,7 +57,7 @@ const getTicketDetails = async (req, res, next) => {
   try {
     const { params, jwtUser } = req
 
-    const ticket = await Ticket.findById(params.id).populate(['createdBy'])
+    const ticket = await Ticket.findById(params.id)
 
     if (!ticket) {
       throw new TicketNotFound()

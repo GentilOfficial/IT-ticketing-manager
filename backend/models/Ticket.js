@@ -1,5 +1,6 @@
 const { Schema, model } = require('mongoose')
 const { InvalidTicketStatusTransition, AssignedUserNotAdmin } = require('../utils/HttpError')
+const autopopulatePlugin = require('mongoose-autopopulate')
 
 const ticketSchema = new Schema(
   {
@@ -26,6 +27,7 @@ const ticketSchema = new Schema(
       type: Schema.Types.ObjectId,
       ref: 'user',
       required: true,
+      autopopulate: true,
     },
     resolvedAt: {
       type: Date,
@@ -35,10 +37,13 @@ const ticketSchema = new Schema(
       type: Schema.Types.ObjectId,
       ref: 'user',
       default: null,
+      autopopulate: true,
     },
   },
   { timestamps: true, strict: true },
 )
+
+ticketSchema.plugin(autopopulatePlugin)
 
 ticketSchema.pre('save', function () {
   if (!this.isModified('status')) return
