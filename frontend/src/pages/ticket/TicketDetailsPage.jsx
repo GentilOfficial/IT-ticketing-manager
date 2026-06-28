@@ -13,10 +13,16 @@ import { Link, useParams } from 'react-router'
 const TicketDetailsPage = () => {
   const { ticketId } = useParams()
   const { token, isAdmin } = useAuth()
-  const { ticket, isLoading, error, ticketStatus, changeTicketStatus, handleTicketUpdated } = useTicketDetails(
-    ticketId,
-    token,
-  )
+  const {
+    ticket,
+    isLoading,
+    error,
+    ticketStatus,
+    changeTicketStatus,
+    assignedTo,
+    changeTicketAssignedTo,
+    handleTicketUpdated,
+  } = useTicketDetails(ticketId, token)
 
   if (error) return <ForbiddenPage />
   if (isLoading || !ticket) return <InitTicketLoading />
@@ -34,7 +40,13 @@ const TicketDetailsPage = () => {
           <MainTicketDetails ticket={ticket} ticketStatus={ticketStatus} onTicketUpdated={handleTicketUpdated} />
         </div>
         <div className="order-2 lg:col-span-1 lg:row-span-2">
-          <TicketPropsDetails ticket={ticket} ticketStatus={ticketStatus} setTicketStatus={changeTicketStatus} />
+          <TicketPropsDetails
+            ticket={ticket}
+            ticketStatus={ticketStatus}
+            setTicketStatus={changeTicketStatus}
+            assignedTo={assignedTo}
+            setAssignedTo={changeTicketAssignedTo}
+          />
         </div>
         <div className="order-3 lg:col-span-2">
           <TicketComments ticketId={ticketId} />
