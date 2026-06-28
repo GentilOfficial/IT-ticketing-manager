@@ -1,3 +1,4 @@
+import UserHoverInfo from '@/components/shared/UserHoverInfo'
 import TicketStatusBadge from '@/components/tickets/TicketStatusBadge'
 import { Button } from '@/components/ui/button'
 import { ArrowDownNarrowWide, ArrowUpDown, ArrowUpNarrowWide } from 'lucide-react'
@@ -44,13 +45,23 @@ export const buildColumns = ({ isAdmin }) => [
   ...(isAdmin
     ? [
         {
-          id: 'createdBy',
-          accessorFn: (row) => row.createdBy?.email,
-          header: ({ column }) => <SortableHeader column={column} label="Created By" />,
-          cell: ({ getValue }) => <span className="text-sm text-muted-foreground">{getValue() ?? '—'}</span>,
+          accessorKey: 'createdBy',
+          header: 'Created By',
+          cell: ({ getValue }) =>
+            getValue() ? (
+              <UserHoverInfo user={getValue()} />
+            ) : (
+              <span className="text-sm text-muted-foreground">N/A</span>
+            ),
         },
       ]
     : []),
+  {
+    accessorKey: 'assignedTo',
+    header: 'Assigned To',
+    cell: ({ getValue }) =>
+      getValue() ? <UserHoverInfo user={getValue()} /> : <span className="text-sm text-muted-foreground">N/A</span>,
+  },
   {
     accessorKey: 'createdAt',
     header: ({ column }) => <SortableHeader column={column} label="Created At" />,

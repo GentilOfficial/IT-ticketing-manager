@@ -29,5 +29,8 @@ export const updateTicketStatus = (ticketId, status, authToken) =>
   request(`/api/tickets/${ticketId}`, { method: 'PUT', body: { status }, authToken })
 export const editTicket = (ticketId, edits, authToken) =>
   request(`/api/tickets/${ticketId}`, { method: 'PUT', body: edits, authToken })
+export const getTicketComments = (ticketId, authToken) => request(`/api/tickets/${ticketId}/comments`, { authToken })
+export const createTicketComment = (ticketId, message, authToken) =>
+  request(`/api/tickets/${ticketId}/comments`, { method: 'POST', body: message, authToken })
 
 export default request

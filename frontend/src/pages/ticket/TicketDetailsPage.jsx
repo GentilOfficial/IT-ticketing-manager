@@ -1,4 +1,5 @@
 import InitTicketLoading from '@/components/loading/InitTicketLoading'
+import TicketComments from '@/components/tickets/details/comments/TicketComments'
 import MainTicketDetails from '@/components/tickets/details/MainTicketDetails'
 import TicketPropsDetails from '@/components/tickets/details/TicketPropsDetails'
 import { Button } from '@/components/ui/button'
@@ -28,11 +29,16 @@ const TicketDetailsPage = () => {
           <span>All Tickets</span>
         </Link>
       </Button>
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-        <div className="lg:col-span-2">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 items-start">
+        <div className="order-1 lg:col-span-2">
           <MainTicketDetails ticket={ticket} ticketStatus={ticketStatus} onTicketUpdated={handleTicketUpdated} />
         </div>
-        <TicketPropsDetails ticket={ticket} ticketStatus={ticketStatus} setTicketStatus={changeTicketStatus} />
+        <div className="order-2 lg:col-span-1 lg:row-span-2">
+          <TicketPropsDetails ticket={ticket} ticketStatus={ticketStatus} setTicketStatus={changeTicketStatus} />
+        </div>
+        <div className="order-3 lg:col-span-2">
+          <TicketComments ticketId={ticketId} />
+        </div>
       </div>
     </AppLayout>
   )

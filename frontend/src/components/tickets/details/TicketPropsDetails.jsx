@@ -1,5 +1,5 @@
+import UserHoverInfo from '@/components/shared/UserHoverInfo'
 import TicketDetailInfoItem from '@/components/tickets/details/TicketDetailInfoItem'
-import UserHoverInfo from '@/components/tickets/details/UserHoverInfo'
 import TicketStatusBadge from '@/components/tickets/TicketStatusBadge'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
@@ -55,21 +55,32 @@ const TicketPropsDetails = ({ ticket, ticketStatus, setTicketStatus }) => {
           }
         />
       </CardContent>
+      {isAdmin && (
+        <>
+          <Separator />
+          <CardContent>
+            <TicketDetailInfoItem label="Created By" children={<UserHoverInfo user={ticket.createdBy} />} />
+          </CardContent>
+        </>
+      )}
       <Separator />
       <CardContent>
-        <TicketDetailInfoItem label="Created by" children={<UserHoverInfo user={ticket.createdBy} />} />
+        <TicketDetailInfoItem
+          label="Assigned To"
+          children={ticket.assignedTo ? <UserHoverInfo user={ticket.assignedTo} /> : <div>N/A</div>}
+        />
       </CardContent>
       <Separator />
       <CardContent>
-        <TicketDetailInfoItem label="Resolved at" value={resolvedAt} />
+        <TicketDetailInfoItem label="Resolved At" value={resolvedAt} />
       </CardContent>
       <Separator />
       <CardContent>
-        <TicketDetailInfoItem label="Created at" value={createdAt} />
+        <TicketDetailInfoItem label="Created At" value={createdAt} />
       </CardContent>
       <Separator />
       <CardContent>
-        <TicketDetailInfoItem label="Updated at" value={updatedAt} />
+        <TicketDetailInfoItem label="Updated At" value={updatedAt} />
       </CardContent>
     </Card>
   )

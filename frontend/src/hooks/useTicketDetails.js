@@ -34,7 +34,7 @@ const useTicketDetails = (ticketId, token) => {
   }, [ticketId, token])
 
   const handleTicketUpdated = (updatedTicket) => {
-    setTicket({ ...updatedTicket, createdBy: ticket.createdBy })
+    setTicket(updatedTicket)
   }
 
   const changeTicketStatus = async (newStatus) => {

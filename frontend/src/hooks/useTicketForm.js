@@ -18,10 +18,10 @@ const useTicketForm = (token, { initialTicket = INITIAL_TICKET, onSuccess } = {}
   const onChangeSetTicketField = (e) => {
     const { name, value } = e.target
 
-    setTicket((currentTicket) => ({
-      ...currentTicket,
+    setTicket({
+      ...ticket,
       [name]: value,
-    }))
+    })
   }
 
   const resetFormFields = () => {
