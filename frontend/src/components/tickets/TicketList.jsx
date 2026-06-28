@@ -51,14 +51,14 @@ const TicketList = () => {
   if (error)
     return (
       <Alert variant="destructive" className="max-w-md">
-        <AlertTriangle />
-        <AlertTitle>Errore during tickets loading</AlertTitle>
+        <AlertTriangle className="size-4" />
+        <AlertTitle>Unable to load tickets</AlertTitle>
         <AlertDescription>{error}</AlertDescription>
       </Alert>
     )
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col gap-5">
       <TicketFilters
         globalFilter={globalFilter}
         onGlobalFilterChange={setGlobalFilter}

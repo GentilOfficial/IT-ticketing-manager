@@ -13,13 +13,15 @@ const TicketsPage = () => {
     <AppLayout>
       <PageHeader
         title={isAdmin ? 'All Tickets' : 'My Tickets'}
-        description={isAdmin ? 'Check out and manage all the issues' : 'Check out and manage all your issues'}
+        description={
+          isAdmin ? 'Review and manage every open issue in the system.' : 'Review and manage the issues you submitted.'
+        }
         actions={
           !isAdmin && (
             <Button asChild>
-              <Link to="/new/ticket">
-                <Plus />
-                New Ticket
+              <Link to="/new/ticket" className="flex items-center gap-2">
+                <Plus className="size-4" />
+                <span>New Ticket</span>
               </Link>
             </Button>
           )
