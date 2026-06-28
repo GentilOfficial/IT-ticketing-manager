@@ -1,5 +1,6 @@
 const { Schema, model } = require('mongoose')
-const { InvalidTicketStatusTransition } = require('../utils/HttpError')
+const { InvalidTicketStatusTransition, AssignedUserNotAdmin } = require('../utils/HttpError')
+const autopopulatePlugin = require('mongoose-autopopulate')
 
 const ticketSchema = new Schema(
   {
@@ -26,23 +27,36 @@ const ticketSchema = new Schema(
       type: Schema.Types.ObjectId,
       ref: 'user',
       required: true,
+      autopopulate: true,
     },
     resolvedAt: {
       type: Date,
       default: null,
     },
+    assignedTo: {
+      type: Schema.Types.ObjectId,
+      ref: 'user',
+      default: null,
+      autopopulate: true,
+    },
   },
   { timestamps: true, strict: true },
 )
+
+ticketSchema.plugin(autopopulatePlugin)
 
 ticketSchema.pre('save', function () {
   if (!this.isModified('status')) return
   this.resolvedAt = this.status === 'resolved' ? new Date() : null
 })
 
-ticketSchema.methods.changeStatus = async function (newStatus) {
+ticketSchema.methods.changeStatus = function (newStatus) {
   if (this.status === newStatus) {
     return this
+  }
+
+  if (!this.assignedTo) {
+    throw new InvalidTicketStatusTransition(this.status, newStatus, 'Ticket must be assigned to change status')
   }
 
   const ALLOWED_TRANSITIONS = {
@@ -60,7 +74,19 @@ ticketSchema.methods.changeStatus = async function (newStatus) {
 
   this.status = newStatus
 
-  await this.save()
+  return this
+}
+
+ticketSchema.methods.assignTo = function (user) {
+  if (this.assignedTo && this.assignedTo.equals(user.id)) {
+    return this
+  }
+
+  if (!user.isAdmin()) {
+    throw new AssignedUserNotAdmin()
+  }
+
+  this.assignedTo = user.id
 
   return this
 }

@@ -13,6 +13,7 @@ const FormField = ({
   required = false,
   value,
   onChange = () => null,
+  onKeyDown = () => null,
   errors,
   disabled = false,
   passwordVisible,
@@ -41,7 +42,7 @@ const FormField = ({
 
   return (
     <Field>
-      <FieldLabel className={hasFieldError && 'text-destructive'}>{label}</FieldLabel>
+      {label && <FieldLabel className={hasFieldError && 'text-destructive'}>{label}</FieldLabel>}
       {multiline ? (
         <div className="relative">
           <Textarea
@@ -51,6 +52,7 @@ const FormField = ({
             value={value}
             disabled={disabled}
             onChange={onChange}
+            onKeyDown={onKeyDown}
             minLength={minLength}
             maxLength={maxLength}
             aria-invalid={hasFieldError}
@@ -74,6 +76,7 @@ const FormField = ({
             value={value}
             disabled={disabled}
             onChange={onChange}
+            onKeyDown={onKeyDown}
             minLength={minLength}
             maxLength={maxLength}
             aria-invalid={hasFieldError}

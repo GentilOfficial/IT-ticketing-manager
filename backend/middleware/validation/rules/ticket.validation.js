@@ -22,6 +22,7 @@ const validateTicketUpdate = [
     .isLength({ min: 10, max: 4000 })
     .withMessage('Description must be between 10 and 4000 characters'),
   body('status').optional().isIn(['open', 'in_progress', 'resolved', 'on_hold']).withMessage('Invalid status'),
+  body('assignedTo').optional().isMongoId().withMessage('Invalid assigned user id'),
   validateRequest,
 ]
 

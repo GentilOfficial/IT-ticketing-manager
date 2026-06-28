@@ -1,12 +1,11 @@
-const User = require('../models/User')
-const { UnauthorizedUser } = require('../utils/HttpError')
+const Ticket = require('../models/Ticket')
+const { UnauthorizedUser, TicketNotFound } = require('../utils/HttpError')
 
 const authorizedUser = async (req, res, next) => {
   try {
-    const { jwtUser } = req
-    const user = await User.findOne({ _id: jwtUser.user_id, role: 'admin' })
+    const { user } = req
 
-    if (!user) {
+    if (user.role !== 'admin') {
       throw new UnauthorizedUser()
     }
 
@@ -16,4 +15,26 @@ const authorizedUser = async (req, res, next) => {
   }
 }
 
-module.exports = { authorizedUser }
+const requireTicketAccess = async (req, res, next) => {
+  try {
+    const { user, params } = req
+
+    const ticket = await Ticket.findById(params.id)
+
+    if (!ticket) {
+      throw new TicketNotFound()
+    }
+
+    req.ticket = ticket
+
+    if (!user.isAdmin() && !ticket.createdBy.equals(user.id)) {
+      throw new UnauthorizedUser()
+    }
+
+    return next()
+  } catch (e) {
+    return next(e)
+  }
+}
+
+module.exports = { authorizedUser, requireTicketAccess }

@@ -12,8 +12,9 @@ class InternalServerError extends HttpError {
 }
 
 class InvalidTicketStatusTransition extends HttpError {
-  constructor(currentStatus, newStatus) {
-    super(400, `Status transition not allowed: ${currentStatus} -> ${newStatus}`)
+  constructor(currentStatus, newStatus, reason) {
+    const message = `Status transition not allowed: ${currentStatus} to ${newStatus}`
+    super(422, reason ? `${message}. ${reason}` : message)
   }
 }
 
@@ -25,7 +26,7 @@ class MissingFields extends HttpError {
 
 class InvalidCredentials extends HttpError {
   constructor() {
-    super(400, 'Invalid credentials. Try again.')
+    super(401, 'Invalid credentials. Try again.')
   }
 }
 
@@ -41,6 +42,12 @@ class InvalidToken extends HttpError {
   }
 }
 
+class AuthenticatedUserNotFound extends HttpError {
+  constructor() {
+    super(401, 'Authenticated user not found.')
+  }
+}
+
 class UserNotFound extends HttpError {
   constructor() {
     super(404, 'User not found.')
@@ -53,9 +60,9 @@ class UnauthorizedUser extends HttpError {
   }
 }
 
-class TicketStatusUnauthorizedUser extends HttpError {
-  constructor() {
-    super(403, 'You are not authorized to change the ticket status.')
+class UnauthorizedTicketEdit extends HttpError {
+  constructor(field = null) {
+    super(403, `You are not authorized to edit the ${field} field.`)
   }
 }
 
@@ -67,14 +74,20 @@ class TicketNotFound extends HttpError {
 
 class ValidationError extends HttpError {
   constructor(errors) {
-    super(400, 'Validation failed.')
+    super(422, 'Validation failed.')
     this.errors = errors
   }
 }
 
 class InvalidObjectId extends HttpError {
   constructor() {
-    super(400, `Invalid resource id.`)
+    super(400, 'Invalid resource id.')
+  }
+}
+
+class AssignedUserNotAdmin extends HttpError {
+  constructor() {
+    super(422, 'The specified user is not an administrator.')
   }
 }
 
@@ -86,10 +99,12 @@ module.exports = {
   InvalidCredentials,
   MissingToken,
   InvalidToken,
+  AuthenticatedUserNotFound,
   UserNotFound,
   UnauthorizedUser,
-  TicketStatusUnauthorizedUser,
+  UnauthorizedTicketEdit,
   TicketNotFound,
   ValidationError,
   InvalidObjectId,
+  AssignedUserNotAdmin,
 }

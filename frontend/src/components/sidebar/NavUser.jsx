@@ -29,7 +29,7 @@ const NavUser = () => {
           >
             <Avatar>
               <AvatarFallback className="font-semibold text-xs shrink-0">
-                {user.name?.slice(0, 2).toUpperCase() || 'U'}
+                {user.name.slice(0, 2).toUpperCase() || 'U'}
               </AvatarFallback>
             </Avatar>
             <div className="grid flex-1 text-left text-sm leading-tight">
@@ -49,7 +49,7 @@ const NavUser = () => {
             <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
               <Avatar>
                 <AvatarFallback className="font-semibold text-xs shrink-0">
-                  {user.name?.slice(0, 2).toUpperCase() || 'U'}
+                  {user.name.slice(0, 2).toUpperCase() || 'U'}
                 </AvatarFallback>
               </Avatar>
               <div className="grid flex-1 text-left text-sm leading-tight">

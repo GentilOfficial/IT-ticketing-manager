@@ -1,9 +1,10 @@
+import UserHoverInfo from '@/components/shared/UserHoverInfo'
 import TicketDetailInfoItem from '@/components/tickets/details/TicketDetailInfoItem'
-import UserHoverInfo from '@/components/tickets/details/UserHoverInfo'
 import TicketStatusBadge from '@/components/tickets/TicketStatusBadge'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Separator } from '@/components/ui/separator'
+import useAdmins from '@/hooks/useAdmins'
 import { useAuth } from '@/providers/AuthProvider'
 import moment from 'moment'
 
@@ -14,8 +15,9 @@ const TICKET_STATUS_TRANSITIONS = {
   resolved: ['open'],
 }
 
-const TicketPropsDetails = ({ ticket, ticketStatus, setTicketStatus }) => {
-  const { isAdmin } = useAuth()
+const TicketPropsDetails = ({ ticket, ticketStatus, setTicketStatus, assignedTo, setAssignedTo }) => {
+  const { isAdmin, token } = useAuth()
+  const { admins, isLoading, error } = useAdmins(token, isAdmin)
   const createdAt = moment(ticket.createdAt).format('DD/MM/YYYY hh:mm')
   const updatedAt = moment(ticket.updatedAt).fromNow()
   const resolvedAt = ticket.resolvedAt ? moment(ticket.resolvedAt).fromNow() : 'N/A'
@@ -55,21 +57,61 @@ const TicketPropsDetails = ({ ticket, ticketStatus, setTicketStatus }) => {
           }
         />
       </CardContent>
+      {isAdmin && (
+        <>
+          <Separator />
+          <CardContent>
+            <TicketDetailInfoItem label="Created By" children={<UserHoverInfo user={ticket.createdBy} />} />
+          </CardContent>
+        </>
+      )}
       <Separator />
       <CardContent>
-        <TicketDetailInfoItem label="Created by" children={<UserHoverInfo user={ticket.createdBy} />} />
+        <TicketDetailInfoItem
+          label="Assigned To"
+          children={
+            isAdmin ? (
+              <Select value={assignedTo || ''} onValueChange={setAssignedTo} disabled={isLoading || error}>
+                <SelectTrigger>
+                  <SelectValue placeholder={ticket.assignedTo ? ticket.assignedTo.name : 'N/A'}>
+                    {ticket.assignedTo ? ticket.assignedTo.name : 'N/A'}
+                  </SelectValue>
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectGroup>
+                    {!isLoading &&
+                      !error &&
+                      admins &&
+                      admins.map((admin) => (
+                        <SelectItem key={admin._id} value={admin._id} className="pe-10">
+                          <div className="flex flex-col pe-4">
+                            <span className="text-sm font-medium truncate">{admin.name}</span>
+                            <span className="text-xs text-muted-foreground truncate">{admin.email}</span>
+                          </div>
+                        </SelectItem>
+                      ))}
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
+            ) : ticket.assignedTo ? (
+              <UserHoverInfo user={ticket.assignedTo} />
+            ) : (
+              <span className="text-muted-foreground text-sm">N/A</span>
+            )
+          }
+        />
       </CardContent>
       <Separator />
       <CardContent>
-        <TicketDetailInfoItem label="Resolved at" value={resolvedAt} />
+        <TicketDetailInfoItem label="Resolved At" value={resolvedAt} />
       </CardContent>
       <Separator />
       <CardContent>
-        <TicketDetailInfoItem label="Created at" value={createdAt} />
+        <TicketDetailInfoItem label="Created At" value={createdAt} />
       </CardContent>
       <Separator />
       <CardContent>
-        <TicketDetailInfoItem label="Updated at" value={updatedAt} />
+        <TicketDetailInfoItem label="Updated At" value={updatedAt} />
       </CardContent>
     </Card>
   )
