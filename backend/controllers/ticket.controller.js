@@ -5,11 +5,34 @@ const { sendSuccess } = require('../utils/responses')
 
 const getTickets = async (req, res, next) => {
   try {
-    const { user } = req
+    const { user, query } = req
 
-    const tickets = await Ticket.find(user.isAdmin() ? {} : { createdBy: user.id })
+    const { search, status } = query
 
-    return sendSuccess(res, { tickets })
+    const page = Math.max(1, Number(query.page) || 1)
+    const limit = Math.min(100, Math.max(1, Number(query.limit) || 10))
+    const skip = (page - 1) * limit
+
+    const filters = {
+      ...(search ? { title: { $regex: search, $options: 'i' } } : {}),
+      ...(status ? { status } : {}),
+      ...(user.isAdmin() ? {} : { createdBy: user.id }),
+    }
+
+    const [tickets, total] = await Promise.all([
+      Ticket.find(filters).sort({ createdAt: -1 }).skip(skip).limit(limit),
+      Ticket.countDocuments(filters),
+    ])
+
+    return sendSuccess(res, {
+      tickets,
+      pagination: {
+        page,
+        limit,
+        total,
+        totalPages: Math.ceil(total / limit),
+      },
+    })
   } catch (e) {
     return next(e)
   }
