@@ -46,10 +46,11 @@ export const buildColumns = ({ isAdmin }) => [
     ? [
         {
           accessorKey: 'createdBy',
+          accessorFn: (row) => (row.createdBy ? row.createdBy.name : 'N/A'),
           header: 'Created By',
-          cell: ({ getValue }) =>
-            getValue() ? (
-              <UserHoverInfo user={getValue()} />
+          cell: ({ row }) =>
+            row.original.createdBy ? (
+              <UserHoverInfo user={row.original.createdBy} />
             ) : (
               <span className="text-sm text-muted-foreground">N/A</span>
             ),
@@ -58,9 +59,14 @@ export const buildColumns = ({ isAdmin }) => [
     : []),
   {
     accessorKey: 'assignedTo',
+    accessorFn: (row) => (row.assignedTo ? row.assignedTo.name : 'N/A'),
     header: 'Assigned To',
-    cell: ({ getValue }) =>
-      getValue() ? <UserHoverInfo user={getValue()} /> : <span className="text-sm text-muted-foreground">N/A</span>,
+    cell: ({ row }) =>
+      row.original.assignedTo ? (
+        <UserHoverInfo user={row.original.assignedTo} />
+      ) : (
+        <span className="text-sm text-muted-foreground">N/A</span>
+      ),
   },
   {
     accessorKey: 'createdAt',

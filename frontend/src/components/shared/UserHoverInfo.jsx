@@ -7,15 +7,15 @@ const UserHoverInfo = ({ user }) => {
   return (
     <HoverCard>
       <HoverCardTrigger asChild>
-        <Button variant="link" className="p-0">
-          {user.name}
+        <Button variant="link" className="p-0" asChild>
+          <div>{user.name}</div>
         </Button>
       </HoverCardTrigger>
       <HoverCardContent side="left" sideOffset={12} className="max-w-52">
         <div className="flex gap-2 text-left text-sm">
           <Avatar>
             <AvatarFallback className="font-semibold text-xs shrink-0">
-              {user.name.slice(0, 2).toUpperCase() || 'U'}
+              {user.name ? user.name.slice(0, 2).toUpperCase() : 'U'}
             </AvatarFallback>
           </Avatar>
           <div className="grid flex-1 text-left text-sm leading-tight">

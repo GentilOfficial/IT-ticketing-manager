@@ -3,13 +3,112 @@ const Ticket = require('../models/Ticket')
 const { UserNotFound, MissingFields, UnauthorizedTicketEdit } = require('../utils/HttpError')
 const { sendSuccess } = require('../utils/responses')
 
+const TICKET_STATUSES = ['open', 'in_progress', 'on_hold', 'resolved']
+const SORT_FIELDS = ['title', 'status', 'createdAt']
+const GROUP_FIELDS = ['status', 'createdBy', 'assignedTo']
+
+const normalizeRegex = (text) => text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+
+const getPositiveInteger = (value, fallback) => {
+  const parsedValue = Number.parseInt(value, 10)
+
+  return Number.isFinite(parsedValue) && parsedValue > 0 ? parsedValue : fallback
+}
+
+const getUserGroup = (user, fallbackKey, fallbackLabel) => {
+  if (!user) {
+    return { key: fallbackKey, label: fallbackLabel, value: null }
+  }
+
+  return {
+    key: user.id,
+    label: user.name,
+    value: user,
+  }
+}
+
+const getTicketGroup = (ticket, groupBy) => {
+  if (groupBy === 'status') {
+    return { key: ticket.status, label: ticket.status, value: ticket.status }
+  }
+
+  if (groupBy === 'createdBy') {
+    return getUserGroup(ticket.createdBy, 'unknown', 'N/A')
+  }
+
+  return getUserGroup(ticket.assignedTo, 'unassigned', 'N/A')
+}
+
+const groupTickets = (tickets, groupBy) => {
+  if (!groupBy) return []
+
+  const groupedTickets = tickets.reduce((groups, ticket) => {
+    const group = getTicketGroup(ticket, groupBy)
+
+    if (!groups[group.key]) {
+      groups[group.key] = {
+        ...group,
+        count: 0,
+        tickets: [],
+      }
+    }
+
+    groups[group.key].count++
+    groups[group.key].tickets.push(ticket)
+
+    return groups
+  }, {})
+
+  return Object.values(groupedTickets)
+}
+
 const getTickets = async (req, res, next) => {
   try {
-    const { user } = req
+    const { user, query } = req
 
-    const tickets = await Ticket.find(user.isAdmin() ? {} : { createdBy: user.id })
+    const { search, status, sort, order, groupBy } = query
 
-    return sendSuccess(res, { tickets })
+    const requestedPage = getPositiveInteger(query.page, 1)
+    const limit = Math.min(100, getPositiveInteger(query.limit, 12))
+    const statusFilter = TICKET_STATUSES.includes(status) ? status : null
+    const groupingField = GROUP_FIELDS.includes(groupBy) ? groupBy : null
+
+    const filters = {
+      ...(search ? { title: { $regex: normalizeRegex(search), $options: 'i' } } : {}),
+      ...(statusFilter ? { status: statusFilter } : {}),
+      ...(user.isAdmin() ? {} : { createdBy: user.id }),
+    }
+
+    const sortField = SORT_FIELDS.includes(sort) ? sort : 'createdAt'
+    const sortOrder = order === 'asc' ? 1 : -1
+
+    const total = await Ticket.countDocuments(filters)
+    const totalPages = Math.max(1, Math.ceil(total / limit))
+    const page = Math.min(requestedPage, totalPages)
+    const skip = (page - 1) * limit
+
+    const tickets = await Ticket.find(filters)
+      .sort({ [sortField]: sortOrder })
+      .skip(skip)
+      .limit(limit)
+    const groups = groupTickets(tickets, groupingField)
+
+    return sendSuccess(res, {
+      tickets,
+      groups,
+      grouping: groupingField
+        ? {
+            field: groupingField,
+            totalGroups: groups.length,
+          }
+        : null,
+      pagination: {
+        page,
+        limit,
+        total,
+        totalPages,
+      },
+    })
   } catch (e) {
     return next(e)
   }
