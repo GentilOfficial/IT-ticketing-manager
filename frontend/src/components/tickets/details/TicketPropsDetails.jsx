@@ -4,6 +4,7 @@ import TicketStatusBadge from '@/components/tickets/TicketStatusBadge'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Separator } from '@/components/ui/separator'
+import { Spinner } from '@/components/ui/spinner'
 import useAdmins from '@/hooks/useAdmins'
 import { useAuth } from '@/providers/AuthProvider'
 import moment from 'moment'
@@ -15,7 +16,15 @@ const TICKET_STATUS_TRANSITIONS = {
   resolved: ['open'],
 }
 
-const TicketPropsDetails = ({ ticket, ticketStatus, setTicketStatus, assignedTo, setAssignedTo }) => {
+const TicketPropsDetails = ({
+  ticket,
+  ticketStatus,
+  setTicketStatus,
+  isStatusLoading,
+  assignedTo,
+  setAssignedTo,
+  isAssignedLoading,
+}) => {
   const { isAdmin, token } = useAuth()
   const { admins, isLoading, error } = useAdmins(token, isAdmin)
   const createdAt = moment(ticket.createdAt).format('DD/MM/YYYY hh:mm')
@@ -35,16 +44,16 @@ const TicketPropsDetails = ({ ticket, ticketStatus, setTicketStatus, assignedTo,
           label="Status"
           children={
             isAdmin ? (
-              <Select value={ticketStatus} onValueChange={setTicketStatus}>
+              <Select value={ticketStatus} onValueChange={setTicketStatus} disabled={isStatusLoading}>
                 <SelectTrigger>
                   <SelectValue>
-                    <TicketStatusBadge status={ticketStatus} />
+                    {isStatusLoading ? <Spinner /> : <TicketStatusBadge status={ticketStatus} />}
                   </SelectValue>
                 </SelectTrigger>
                 <SelectContent>
                   <SelectGroup>
                     {availableStatuses.map((status) => (
-                      <SelectItem key={status} value={status}>
+                      <SelectItem key={status} value={status} className="pe-12">
                         <TicketStatusBadge status={status} />
                       </SelectItem>
                     ))}
@@ -71,10 +80,14 @@ const TicketPropsDetails = ({ ticket, ticketStatus, setTicketStatus, assignedTo,
           label="Assigned To"
           children={
             isAdmin ? (
-              <Select value={assignedTo || ''} onValueChange={setAssignedTo} disabled={isLoading || error}>
+              <Select
+                value={assignedTo || ''}
+                onValueChange={setAssignedTo}
+                disabled={isAssignedLoading || isLoading || error}
+              >
                 <SelectTrigger>
                   <SelectValue placeholder={ticket.assignedTo ? ticket.assignedTo.name : 'N/A'}>
-                    {ticket.assignedTo ? ticket.assignedTo.name : 'N/A'}
+                    {isAssignedLoading ? <Spinner /> : ticket.assignedTo ? ticket.assignedTo.name : 'N/A'}
                   </SelectValue>
                 </SelectTrigger>
                 <SelectContent>
@@ -83,8 +96,8 @@ const TicketPropsDetails = ({ ticket, ticketStatus, setTicketStatus, assignedTo,
                       !error &&
                       admins &&
                       admins.map((admin) => (
-                        <SelectItem key={admin._id} value={admin._id} className="pe-10">
-                          <div className="flex flex-col pe-4">
+                        <SelectItem key={admin._id} value={admin._id} className="pe-12">
+                          <div className="flex flex-col">
                             <span className="text-sm font-medium truncate">{admin.name}</span>
                             <span className="text-xs text-muted-foreground truncate">{admin.email}</span>
                           </div>
