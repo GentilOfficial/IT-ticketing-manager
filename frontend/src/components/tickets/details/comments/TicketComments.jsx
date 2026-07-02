@@ -126,20 +126,22 @@ const TicketComments = ({ ticketId }) => {
           </Alert>
         )}
         <form onSubmit={handleFormSubmit} className="w-full flex gap-4">
-          <FormField
-            name="message"
-            placeholder="Type a message... (Shift+Enter -> new line)"
-            required
-            multiline
-            value={message}
-            onChange={onChangeSetMessage}
-            onKeyDown={handleKeyDown}
-            errors={fieldErrors}
-            disabled={isSending}
-            minLength={1}
-            maxLength={400}
-            className="max-h-30 overflow-y-auto"
-          />
+          <div className="flex-1 min-w-0">
+            <FormField
+              name="message"
+              placeholder="Type a message... (Shift+Enter -> new line)"
+              required
+              multiline
+              value={message}
+              onChange={onChangeSetMessage}
+              onKeyDown={handleKeyDown}
+              errors={fieldErrors}
+              disabled={isSending}
+              minLength={1}
+              maxLength={400}
+              className="max-h-30 overflow-y-auto"
+            />
+          </div>
           <Tooltip>
             <TooltipTrigger asChild>
               <Button type="submit" size="icon" className="rounded-full" disabled={!message.trim() || isSending}>
