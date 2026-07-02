@@ -8,6 +8,8 @@ const useTicketDetails = (ticketId, token) => {
   const [error, setError] = useState(null)
   const [ticketStatus, setTicketStatus] = useState(null)
   const [assignedTo, setAssignedTo] = useState(null)
+  const [isAssignedLoading, setIsAssignedLoading] = useState(false)
+  const [isStatusLoading, setIsStatusLoading] = useState(false)
 
   useEffect(() => {
     const initTicket = async () => {
@@ -42,14 +44,12 @@ const useTicketDetails = (ticketId, token) => {
   const changeTicketStatus = async (newStatus) => {
     if (!ticket) return
 
-    const previousStatus = ticketStatus
-    setTicketStatus(newStatus)
+    setIsStatusLoading(true)
 
     try {
       const data = await updateTicketStatus(ticketId, newStatus, token)
 
       if (!data.success) {
-        setTicketStatus(previousStatus)
         toast.error(data.message || 'Error during ticket status change', { position: 'top-center' })
       } else {
         handleTicketUpdated(data.ticket)
@@ -58,22 +58,21 @@ const useTicketDetails = (ticketId, token) => {
       }
     } catch (e) {
       console.error('Error during ticket status change:', e)
-      setTicketStatus(previousStatus)
       toast.error('Network error. Please check your internet connection', { position: 'top-center' })
+    } finally {
+      setIsStatusLoading(false)
     }
   }
 
   const changeTicketAssignedTo = async (newAssignedTo) => {
     if (!ticket) return
 
-    const previousAssignedTo = assignedTo
-    setAssignedTo(newAssignedTo)
+    setIsAssignedLoading(true)
 
     try {
       const data = await updateTicketAssignedTo(ticketId, newAssignedTo, token)
 
       if (!data.success) {
-        setAssignedTo(previousAssignedTo)
         toast.error(data.message || 'Error during ticket assignment', { position: 'top-center' })
       } else {
         handleTicketUpdated(data.ticket)
@@ -84,8 +83,9 @@ const useTicketDetails = (ticketId, token) => {
       }
     } catch (e) {
       console.error('Error during ticket assignment:', e)
-      setAssignedTo(previousAssignedTo)
       toast.error('Network error. Please check your internet connection.', { position: 'top-center' })
+    } finally {
+      setIsAssignedLoading(false)
     }
   }
 
@@ -95,8 +95,10 @@ const useTicketDetails = (ticketId, token) => {
     error,
     ticketStatus,
     changeTicketStatus,
+    isStatusLoading,
     assignedTo,
     changeTicketAssignedTo,
+    isAssignedLoading,
     handleTicketUpdated,
   }
 }

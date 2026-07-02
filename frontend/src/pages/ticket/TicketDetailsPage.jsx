@@ -20,8 +20,10 @@ const TicketDetailsPage = () => {
     error,
     ticketStatus,
     changeTicketStatus,
+    isStatusLoading,
     assignedTo,
     changeTicketAssignedTo,
+    isAssignedLoading,
     handleTicketUpdated,
   } = useTicketDetails(ticketId, token)
 
@@ -50,8 +52,10 @@ const TicketDetailsPage = () => {
             ticket={ticket}
             ticketStatus={ticketStatus}
             setTicketStatus={changeTicketStatus}
+            isStatusLoading={isStatusLoading}
             assignedTo={assignedTo}
             setAssignedTo={changeTicketAssignedTo}
+            isAssignedLoading={isAssignedLoading}
           />
         </div>
         <div className="order-3 lg:col-span-2">
