@@ -88,7 +88,7 @@ const getTickets = async (req, res, next) => {
     const skip = (page - 1) * limit
 
     const tickets = await Ticket.find(filters)
-      .sort({ [sortField]: sortOrder })
+      .sort({ ...(groupingField && { [groupingField]: 1 }), [sortField]: sortOrder })
       .skip(skip)
       .limit(limit)
     const groups = groupTickets(tickets, groupingField)
