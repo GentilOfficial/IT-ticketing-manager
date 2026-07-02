@@ -8,6 +8,7 @@ import AppLayout from '@/layouts/AppLayout'
 import ForbiddenPage from '@/pages/ForbiddenPage'
 import { useAuth } from '@/providers/AuthProvider'
 import { ChevronLeft } from 'lucide-react'
+import { useEffect } from 'react'
 import { Link, useParams } from 'react-router'
 
 const TicketDetailsPage = () => {
@@ -23,6 +24,11 @@ const TicketDetailsPage = () => {
     changeTicketAssignedTo,
     handleTicketUpdated,
   } = useTicketDetails(ticketId, token)
+
+  useEffect(() => {
+    if (!error && !isLoading && ticket)
+      document.title = `Helpdesk ${isAdmin && '| Administration'} - Ticket: ${ticketId}`
+  }, [ticket])
 
   if (error) return <ForbiddenPage />
   if (isLoading || !ticket) return <InitTicketLoading />

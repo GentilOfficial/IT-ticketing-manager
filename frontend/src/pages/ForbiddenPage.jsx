@@ -5,6 +5,10 @@ import { Link, useNavigate } from 'react-router'
 const ForbiddenPage = () => {
   const navigate = useNavigate()
 
+  useEffect(() => {
+    document.title = 'Helpdesk - Forbidden'
+  }, [])
+
   return (
     <main className="flex min-h-screen items-center justify-center bg-background py-12 px-6">
       <div className="w-full max-w-lg text-center">

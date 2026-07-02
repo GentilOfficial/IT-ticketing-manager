@@ -1,9 +1,14 @@
 import { Button } from '@/components/ui/button'
 import { ArrowLeft, GlobeX, Home } from 'lucide-react'
+import { useEffect } from 'react'
 import { Link, useNavigate } from 'react-router'
 
 const NotFoundPage = () => {
   const navigate = useNavigate()
+
+  useEffect(() => {
+    document.title = 'Helpdesk - Page Not Fund'
+  }, [])
 
   return (
     <main className="flex min-h-screen items-center justify-center bg-background py-12 px-6">
