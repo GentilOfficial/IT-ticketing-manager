@@ -14,30 +14,25 @@ import {
 import { FieldGroup } from '@/components/ui/field'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import useTicketForm, { TICKET_DESCRIPTION_LENGTH, TICKET_TITLE_LENGTH } from '@/hooks/useTicketForm'
-import { useAuth } from '@/providers/AuthProvider'
 import { AlertCircle, SquarePen } from 'lucide-react'
 import { useState } from 'react'
 import { toast } from 'sonner'
 
 const EditTicketDetails = ({ ticketToEdit, onTicketUpdated }) => {
-  const { token } = useAuth()
   const [isOpen, setIsOpen] = useState(false)
 
-  const { ticket, isLoading, errors, onChangeSetTicketField, submitEditTicketForm, resetMessages } = useTicketForm(
-    token,
-    {
-      initialTicket: {
-        _id: ticketToEdit._id,
-        title: ticketToEdit.title,
-        description: ticketToEdit.description,
-      },
-      onSuccess: (updatedTicket, message) => {
-        if (onTicketUpdated) onTicketUpdated(updatedTicket)
-        toast.success(message, { position: 'top-center' })
-        setIsOpen(false)
-      },
+  const { ticket, isLoading, errors, onChangeSetTicketField, submitEditTicketForm, resetMessages } = useTicketForm({
+    initialTicket: {
+      _id: ticketToEdit._id,
+      title: ticketToEdit.title,
+      description: ticketToEdit.description,
     },
-  )
+    onSuccess: (updatedTicket, message) => {
+      if (onTicketUpdated) onTicketUpdated(updatedTicket)
+      toast.success(message, { position: 'top-center' })
+      setIsOpen(false)
+    },
+  })
 
   const canSubmitForm = Object.values(ticket).every(Boolean)
 

@@ -1,6 +1,9 @@
-const request = async (path, { method = 'GET', body, authToken } = {}) => {
+import { getToken, setToken } from '@/lib/authToken'
+
+const request = async (path, { method = 'GET', body } = {}, retry = false) => {
   const config = {
     method,
+    credentials: 'include',
     headers: {},
   }
 
@@ -9,23 +12,40 @@ const request = async (path, { method = 'GET', body, authToken } = {}) => {
     config.body = JSON.stringify(body)
   }
 
+  const authToken = getToken()
+
   if (authToken) {
     config.headers.Authorization = authToken
   }
 
   const response = await fetch(`${import.meta.env.VITE_API_SERVER}${path}`, config)
+
+  if (response.status === 419 && !retry) {
+    const refreshData = await refreshToken(true)
+
+    if (!refreshData.success) {
+      setToken(null)
+      return refreshData
+    } else {
+      setToken(refreshData.token)
+      return request(path, { method, body })
+    }
+  }
+
   const data = await response.json()
 
   return data
 }
 
-export const getCurrentUser = (authToken) => request('/api/auth/me', { authToken })
+export const getCurrentUser = () => request('/api/auth/me')
 
 export const login = (credentials) => request('/api/auth/login', { method: 'POST', body: credentials })
 
 export const register = (userDetails) => request('/api/auth/register', { method: 'POST', body: userDetails })
 
-export const getTickets = (authToken, params = {}) => {
+export const refreshToken = (retry) => request('/api/auth/refresh', { method: 'POST' }, retry)
+
+export const getTickets = (params = {}) => {
   const searchParams = new URLSearchParams()
 
   Object.entries(params).forEach(([key, value]) => {
@@ -37,29 +57,28 @@ export const getTickets = (authToken, params = {}) => {
   const queryString = searchParams.toString()
   const path = `/api/tickets${queryString ? `?${queryString}` : ''}`
 
-  return request(path, { authToken })
+  return request(path)
 }
 
-export const createTicket = (ticket, authToken) => request('/api/tickets', { method: 'POST', body: ticket, authToken })
+export const createTicket = (ticket) => request('/api/tickets', { method: 'POST', body: ticket })
 
-export const getTicketById = (ticketId, authToken) => request(`/api/tickets/${ticketId}`, { authToken })
+export const getTicketById = (ticketId) => request(`/api/tickets/${ticketId}`)
 
-export const updateTicketStatus = (ticketId, status, authToken) =>
-  request(`/api/tickets/${ticketId}`, { method: 'PUT', body: { status }, authToken })
+export const updateTicketStatus = (ticketId, status) =>
+  request(`/api/tickets/${ticketId}`, { method: 'PUT', body: { status } })
 
-export const editTicket = (ticketId, edits, authToken) =>
-  request(`/api/tickets/${ticketId}`, { method: 'PUT', body: edits, authToken })
+export const editTicket = (ticketId, edits) => request(`/api/tickets/${ticketId}`, { method: 'PUT', body: edits })
 
-export const updateTicketAssignedTo = (ticketId, assignedTo, authToken) =>
-  request(`/api/tickets/${ticketId}`, { method: 'PUT', body: { assignedTo }, authToken })
+export const updateTicketAssignedTo = (ticketId, assignedTo) =>
+  request(`/api/tickets/${ticketId}`, { method: 'PUT', body: { assignedTo } })
 
-export const getTicketComments = (ticketId, authToken) => request(`/api/tickets/${ticketId}/comments`, { authToken })
+export const getTicketComments = (ticketId) => request(`/api/tickets/${ticketId}/comments`)
 
-export const createTicketComment = (ticketId, message, authToken) =>
-  request(`/api/tickets/${ticketId}/comments`, { method: 'POST', body: message, authToken })
+export const createTicketComment = (ticketId, message) =>
+  request(`/api/tickets/${ticketId}/comments`, { method: 'POST', body: message })
 
-export const getAllUsers = (authToken) => request('/api/users/all', { authToken })
+export const getAllUsers = () => request('/api/users/all')
 
-export const getAdminUsers = (authToken) => request('/api/users/admin', { authToken })
+export const getAdminUsers = () => request('/api/users/admin')
 
 export default request

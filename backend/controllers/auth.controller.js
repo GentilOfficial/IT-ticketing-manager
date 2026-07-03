@@ -1,6 +1,13 @@
 const User = require('../models/User')
 const { generateToken } = require('../utils/generateToken')
-const { MissingFields, InvalidCredentials, UserNotFound, AuthenticatedUserNotFound } = require('../utils/HttpError')
+const {
+  MissingFields,
+  InvalidCredentials,
+  UserNotFound,
+  AuthenticatedUserNotFound,
+  InvalidToken,
+  SessionExpired,
+} = require('../utils/HttpError')
 const { sendSuccess } = require('../utils/responses')
 
 const register = async (req, res, next) => {
@@ -24,6 +31,8 @@ const register = async (req, res, next) => {
     await user.save()
 
     const token = generateToken(user)
+
+    req.session.user_id = user.id
 
     return sendSuccess(res, { token }, 201)
   } catch (e) {
@@ -53,6 +62,8 @@ const login = async (req, res, next) => {
 
     const token = generateToken(user)
 
+    req.session.user_id = user.id
+
     return sendSuccess(res, { token })
   } catch (e) {
     return next(e)
@@ -63,10 +74,37 @@ const loggedUser = async (req, res, next) => {
   try {
     const { user } = req
 
-    return sendSuccess(res, { user }, 201)
+    return sendSuccess(res, { user })
   } catch (e) {
     return next(e)
   }
 }
 
-module.exports = { register, login, loggedUser }
+const refresh = async (req, res, next) => {
+  try {
+    if (!req.session.user_id) {
+      throw new SessionExpired()
+    }
+
+    const user = await User.findById(req.session.user_id)
+
+    if (!user) {
+      throw new AuthenticatedUserNotFound()
+    }
+
+    const token = generateToken(user)
+
+    return sendSuccess(res, { token })
+  } catch (e) {
+    return next(e)
+  }
+}
+
+const logout = (req, res) => {
+  req.session.destroy(() => {
+    res.clearCookie('connect.sid')
+    sendSuccess(res)
+  })
+}
+
+module.exports = { register, login, loggedUser, refresh, logout }

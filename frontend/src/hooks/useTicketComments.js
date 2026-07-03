@@ -1,7 +1,7 @@
 import { createTicketComment as createTicketCommentRequest, getTicketComments } from '@/lib/api'
 import { useEffect, useState } from 'react'
 
-const useTicketComments = (ticketId, token) => {
+const useTicketComments = (ticketId) => {
   const [comments, setComments] = useState(null)
   const [isLoading, setIsLoading] = useState(false)
   const [isSending, setIsSending] = useState(false)
@@ -14,7 +14,7 @@ const useTicketComments = (ticketId, token) => {
       setError(null)
 
       try {
-        const data = await getTicketComments(ticketId, token)
+        const data = await getTicketComments(ticketId)
 
         if (!data.success) {
           setError(data.message || 'Error during comments loading.')
@@ -30,7 +30,7 @@ const useTicketComments = (ticketId, token) => {
     }
 
     initTicket()
-  }, [ticketId, token])
+  }, [ticketId])
 
   const appendComment = (newComment) => {
     setComments([...comments, newComment])
@@ -40,7 +40,7 @@ const useTicketComments = (ticketId, token) => {
     setIsSending(true)
     setSendingError(null)
     try {
-      const data = await createTicketCommentRequest(ticketId, message, token)
+      const data = await createTicketCommentRequest(ticketId, message)
 
       if (!data.success) {
         setSendingError(data.errors || data.message || 'Error sending comment.')

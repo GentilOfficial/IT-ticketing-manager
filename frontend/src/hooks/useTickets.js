@@ -8,7 +8,7 @@ const DEFAULT_PAGINATION = {
   totalPages: 1,
 }
 
-const useTickets = (token, query = {}) => {
+const useTickets = (query = {}) => {
   const [tickets, setTickets] = useState([])
   const [groups, setGroups] = useState([])
   const [pagination, setPagination] = useState(DEFAULT_PAGINATION)
@@ -18,20 +18,11 @@ const useTickets = (token, query = {}) => {
   const { search, status, page, limit, sort, order, groupBy } = query
 
   const refreshTickets = async () => {
-    if (!token) {
-      setTickets([])
-      setGroups([])
-      setPagination(DEFAULT_PAGINATION)
-      setError(null)
-      setIsLoading(false)
-      return
-    }
-
     try {
       setIsLoading(true)
       setError(null)
 
-      const data = await getTickets(token, query)
+      const data = await getTickets(query)
 
       if (!data.success) {
         setError(data.message || 'Error during tickets loading.')
@@ -56,7 +47,7 @@ const useTickets = (token, query = {}) => {
 
   useEffect(() => {
     refreshTickets()
-  }, [token, search, status, page, limit, sort, order, groupBy])
+  }, [search, status, page, limit, sort, order, groupBy])
 
   return { tickets, groups, pagination, isLoading, error, refreshTickets }
 }

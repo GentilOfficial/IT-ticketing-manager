@@ -13,7 +13,7 @@ import { Link, useParams } from 'react-router'
 
 const TicketDetailsPage = () => {
   const { ticketId } = useParams()
-  const { token, isAdmin } = useAuth()
+  const { isAdmin } = useAuth()
   const {
     ticket,
     isLoading,
@@ -25,7 +25,7 @@ const TicketDetailsPage = () => {
     changeTicketAssignedTo,
     isAssignedLoading,
     handleTicketUpdated,
-  } = useTicketDetails(ticketId, token)
+  } = useTicketDetails(ticketId)
 
   useEffect(() => {
     if (!error && !isLoading && ticket)

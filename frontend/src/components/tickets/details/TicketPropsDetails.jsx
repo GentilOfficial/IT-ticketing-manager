@@ -25,8 +25,8 @@ const TicketPropsDetails = ({
   setAssignedTo,
   isAssignedLoading,
 }) => {
-  const { isAdmin, token } = useAuth()
-  const { admins, isLoading, error } = useAdmins(token, isAdmin)
+  const { isAdmin } = useAuth()
+  const { admins, isLoading, error } = useAdmins(isAdmin)
   const createdAt = moment(ticket.createdAt).format('DD/MM/YYYY hh:mm')
   const updatedAt = moment(ticket.updatedAt).fromNow()
   const resolvedAt = ticket.resolvedAt ? moment(ticket.resolvedAt).fromNow() : 'N/A'

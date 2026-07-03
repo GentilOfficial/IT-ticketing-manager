@@ -1,13 +1,13 @@
 import { getAdminUsers } from '@/lib/api'
 import { useEffect, useState } from 'react'
 
-const useAdmins = (token, enabled = true) => {
+const useAdmins = (enabled = true) => {
   const [admins, setAdmins] = useState([])
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState(null)
 
   const refreshAdmins = async () => {
-    if (!token || !enabled) {
+    if (!enabled) {
       setAdmins([])
       setError(null)
       setIsLoading(false)
@@ -17,7 +17,7 @@ const useAdmins = (token, enabled = true) => {
     try {
       setIsLoading(true)
       setError(null)
-      const data = await getAdminUsers(token)
+      const data = await getAdminUsers()
 
       if (!data.success) {
         const errorMessage = data.message
@@ -40,7 +40,7 @@ const useAdmins = (token, enabled = true) => {
 
   useEffect(() => {
     refreshAdmins()
-  }, [token, enabled])
+  }, [enabled])
 
   return { admins, isLoading, error, refreshAdmins }
 }

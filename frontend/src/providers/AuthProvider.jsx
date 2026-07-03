@@ -1,25 +1,22 @@
 import { getCurrentUser, login as loginRequest, register as registerRequest } from '@/lib/api'
+import { getToken, setToken } from '@/lib/authToken'
 import { createContext, useContext, useEffect, useState } from 'react'
 
 export const AuthContext = createContext({})
 
-const TOKEN_KEY = 'auth_token'
-
 const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null)
-  const [token, setToken] = useState(() => localStorage.getItem(TOKEN_KEY))
   const [errors, setErrors] = useState(null)
   const [isLoading, setIsLoading] = useState(true)
 
   const logout = () => {
     setUser(null)
     setToken(null)
-    localStorage.removeItem(TOKEN_KEY)
   }
 
-  const fetchUser = async (authToken) => {
+  const fetchUser = async () => {
     try {
-      const data = await getCurrentUser(authToken)
+      const data = await getCurrentUser()
 
       if (!data.success) {
         logout()
@@ -45,9 +42,8 @@ const AuthProvider = ({ children }) => {
       }
 
       setToken(data.token)
-      localStorage.setItem(TOKEN_KEY, data.token)
 
-      await fetchUser(data.token)
+      await fetchUser()
     } catch (e) {
       console.error('An error occurred during authentication:', e)
       setErrors('Network error. Please check your internet connection.')
@@ -65,9 +61,8 @@ const AuthProvider = ({ children }) => {
       }
 
       setToken(data.token)
-      localStorage.setItem(TOKEN_KEY, data.token)
 
-      await fetchUser(data.token)
+      await fetchUser()
     } catch (e) {
       console.error('An error occurred during registration:', e)
       setErrors('Network error. Please check your internet connection.')
@@ -78,11 +73,10 @@ const AuthProvider = ({ children }) => {
     const initAuth = async () => {
       setIsLoading(true)
       try {
-        const storedToken = localStorage.getItem(TOKEN_KEY)
-
+        const storedToken = getToken()
+        console.log(storedToken)
         if (storedToken) {
-          const isValid = await fetchUser(storedToken)
-          if (isValid) setToken(storedToken)
+          await fetchUser()
         }
       } finally {
         setIsLoading(false)
@@ -96,7 +90,6 @@ const AuthProvider = ({ children }) => {
     <AuthContext.Provider
       value={{
         user,
-        token,
         isAuthenticated: Boolean(user),
         isAdmin: user && user.role === 'admin',
         login,

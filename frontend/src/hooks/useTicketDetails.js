@@ -2,7 +2,7 @@ import { getTicketById, updateTicketAssignedTo, updateTicketStatus } from '@/lib
 import { useEffect, useState } from 'react'
 import { toast } from 'sonner'
 
-const useTicketDetails = (ticketId, token) => {
+const useTicketDetails = (ticketId) => {
   const [ticket, setTicket] = useState(null)
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState(null)
@@ -17,7 +17,7 @@ const useTicketDetails = (ticketId, token) => {
       setError(null)
 
       try {
-        const data = await getTicketById(ticketId, token)
+        const data = await getTicketById(ticketId)
 
         if (!data.success) {
           setError(data.message || 'Error during ticket loading.')
@@ -35,7 +35,7 @@ const useTicketDetails = (ticketId, token) => {
     }
 
     initTicket()
-  }, [ticketId, token])
+  }, [ticketId])
 
   const handleTicketUpdated = (updatedTicket) => {
     setTicket(updatedTicket)
@@ -47,7 +47,7 @@ const useTicketDetails = (ticketId, token) => {
     setIsStatusLoading(true)
 
     try {
-      const data = await updateTicketStatus(ticketId, newStatus, token)
+      const data = await updateTicketStatus(ticketId, newStatus)
 
       if (!data.success) {
         toast.error(data.message || 'Error during ticket status change', { position: 'top-center' })
@@ -70,7 +70,7 @@ const useTicketDetails = (ticketId, token) => {
     setIsAssignedLoading(true)
 
     try {
-      const data = await updateTicketAssignedTo(ticketId, newAssignedTo, token)
+      const data = await updateTicketAssignedTo(ticketId, newAssignedTo)
 
       if (!data.success) {
         toast.error(data.message || 'Error during ticket assignment', { position: 'top-center' })

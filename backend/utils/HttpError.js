@@ -38,13 +38,19 @@ class MissingToken extends HttpError {
 
 class InvalidToken extends HttpError {
   constructor() {
-    super(401, 'Authorization token not valid.')
+    super(419, 'Authorization token not valid.')
   }
 }
 
 class AuthenticatedUserNotFound extends HttpError {
   constructor() {
     super(401, 'Authenticated user not found.')
+  }
+}
+
+class SessionExpired extends HttpError {
+  constructor() {
+    super(419, 'Session expired. Please login again.')
   }
 }
 
@@ -100,6 +106,7 @@ module.exports = {
   MissingToken,
   InvalidToken,
   AuthenticatedUserNotFound,
+  SessionExpired,
   UserNotFound,
   UnauthorizedUser,
   UnauthorizedTicketEdit,

@@ -9,7 +9,7 @@ import { AlertTriangle } from 'lucide-react'
 import { useState } from 'react'
 
 const TicketList = () => {
-  const { token, isAdmin } = useAuth()
+  const { isAdmin } = useAuth()
 
   const [globalFilter, setGlobalFilter] = useState('')
   const [statusFilter, setStatusFilter] = useState('all')
@@ -31,7 +31,7 @@ const TicketList = () => {
     groupBy: grouping !== 'none' ? grouping : null,
   }
 
-  const { tickets, groups, pagination, isLoading, error } = useTickets(token, query)
+  const { tickets, groups, pagination, isLoading, error } = useTickets(query)
 
   const resetFilters = () => {
     setGlobalFilter('')
