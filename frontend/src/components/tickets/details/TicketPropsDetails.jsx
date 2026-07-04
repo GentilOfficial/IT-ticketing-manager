@@ -5,8 +5,8 @@ import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Separator } from '@/components/ui/separator'
 import { Spinner } from '@/components/ui/spinner'
+import { useAuth } from '@/context/AuthContext'
 import useAdmins from '@/hooks/useAdmins'
-import { useAuth } from '@/providers/AuthProvider'
 import moment from 'moment'
 
 const TICKET_STATUS_TRANSITIONS = {
@@ -25,8 +25,8 @@ const TicketPropsDetails = ({
   setAssignedTo,
   isAssignedLoading,
 }) => {
-  const { isAdmin, token } = useAuth()
-  const { admins, isLoading, error } = useAdmins(token, isAdmin)
+  const { isAdmin } = useAuth()
+  const { admins, isLoading, error } = useAdmins(isAdmin)
   const createdAt = moment(ticket.createdAt).format('DD/MM/YYYY hh:mm')
   const updatedAt = moment(ticket.updatedAt).fromNow()
   const resolvedAt = ticket.resolvedAt ? moment(ticket.resolvedAt).fromNow() : 'N/A'

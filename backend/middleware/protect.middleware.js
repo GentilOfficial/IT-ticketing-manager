@@ -1,10 +1,11 @@
-const { verify, JsonWebTokenError } = require('jsonwebtoken')
+const { verify, JsonWebTokenError, TokenExpiredError } = require('jsonwebtoken')
 const { InvalidToken, MissingToken, AuthenticatedUserNotFound } = require('../utils/HttpError')
 const User = require('../models/User')
 
 const PUBLIC_ROUTES = [
   { path: '/api/auth/register', method: 'POST' },
   { path: '/api/auth/login', method: 'POST' },
+  { path: '/api/auth/refresh', method: 'POST' },
 ]
 
 const protectRoutes = async (req, res, next) => {
@@ -20,6 +21,10 @@ const protectRoutes = async (req, res, next) => {
     }
 
     const jwtUser = verify(token, process.env.JWT_SIGN_SECRET)
+
+    if (!req.session.user_id || req.session.user_id !== jwtUser.user_id) {
+      throw new InvalidToken()
+    }
 
     const user = await User.findById(jwtUser.user_id)
 

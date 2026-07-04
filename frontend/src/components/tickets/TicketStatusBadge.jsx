@@ -1,7 +1,7 @@
 import { CircleCheck, CircleDot, Clock, ClockAlert } from 'lucide-react'
 import { Badge } from '../ui/badge'
 
-export const STATUS_MAP = {
+const STATUS_MAP = {
   open: { label: 'Open', icon: CircleDot, class: 'text-blue-500', badge: 'bg-blue-50 text-blue-700 border-blue-200' },
   in_progress: {
     label: 'In Progress',

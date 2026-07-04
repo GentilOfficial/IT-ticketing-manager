@@ -1,5 +1,5 @@
 import InitAuthLoading from '@/components/loading/InitAuthLoading'
-import { useAuth } from '@/providers/AuthProvider'
+import { useAuth } from '@/context/AuthContext'
 import { Navigate, Outlet } from 'react-router'
 
 const ProtectedRoute = ({ role }) => {

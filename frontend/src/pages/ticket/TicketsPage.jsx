@@ -1,8 +1,8 @@
 import PageHeader from '@/components/shared/PageHeader'
 import TicketList from '@/components/tickets/TicketList'
 import { Button } from '@/components/ui/button'
+import { useAuth } from '@/context/AuthContext'
 import AppLayout from '@/layouts/AppLayout'
-import { useAuth } from '@/providers/AuthProvider'
 import { Plus } from 'lucide-react'
 import { useEffect } from 'react'
 import { Link } from 'react-router'
@@ -12,7 +12,7 @@ const TicketsPage = () => {
 
   useEffect(() => {
     document.title = `Helpdesk ${isAdmin && '| Administration'} - All Tickets`
-  }, [])
+  }, [isAdmin])
 
   return (
     <AppLayout>

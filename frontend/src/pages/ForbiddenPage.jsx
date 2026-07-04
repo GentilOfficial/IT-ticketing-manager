@@ -1,5 +1,6 @@
 import { Button } from '@/components/ui/button'
 import { ArrowLeft, Home, ShieldX } from 'lucide-react'
+import { useEffect } from 'react'
 import { Link, useNavigate } from 'react-router'
 
 const ForbiddenPage = () => {

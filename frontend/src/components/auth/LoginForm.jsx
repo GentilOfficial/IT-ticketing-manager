@@ -2,7 +2,7 @@ import FormField from '@/components/form/FormField'
 import { Button } from '@/components/ui/button'
 import { Field, FieldDescription, FieldGroup, FieldSeparator } from '@/components/ui/field'
 import { Spinner } from '@/components/ui/spinner'
-import { useAuth } from '@/providers/AuthProvider'
+import { useAuth } from '@/context/AuthContext'
 import { useState } from 'react'
 import { Link } from 'react-router'
 

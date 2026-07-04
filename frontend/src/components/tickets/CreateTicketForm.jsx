@@ -4,14 +4,12 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardFooter } from '@/components/ui/card'
 import { Spinner } from '@/components/ui/spinner'
 import useTicketForm, { TICKET_DESCRIPTION_LENGTH, TICKET_TITLE_LENGTH } from '@/hooks/useTicketForm'
-import { useAuth } from '@/providers/AuthProvider'
 import { AlertCircle, ArrowLeft, Eraser, Send, TicketCheck } from 'lucide-react'
 import { Link } from 'react-router'
 
 const CreateTicketForm = () => {
-  const { token } = useAuth()
   const { ticket, isLoading, errors, success, onChangeSetTicketField, resetFormFields, submitTicketForm } =
-    useTicketForm(token)
+    useTicketForm()
 
   const canSubmitForm = Object.values(ticket).every(Boolean)
 

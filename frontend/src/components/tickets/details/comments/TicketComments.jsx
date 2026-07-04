@@ -8,16 +8,11 @@ import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/componen
 import { Spinner } from '@/components/ui/spinner'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import useTicketComments from '@/hooks/useTicketComments'
-import { useAuth } from '@/providers/AuthProvider'
 import { AlertCircle, ArrowDown, ArrowUp, MessageSquare } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
 
 const TicketComments = ({ ticketId }) => {
-  const { token } = useAuth()
-  const { comments, isLoading, error, createTicketComment, isSending, sendingError } = useTicketComments(
-    ticketId,
-    token,
-  )
+  const { comments, isLoading, error, createTicketComment, isSending, sendingError } = useTicketComments(ticketId)
   const [message, setMessage] = useState('')
   const scrollRef = useRef(null)
 

@@ -6,5 +6,7 @@ const { validateRegister, validateLogin } = require('../middleware/validation/ru
 authRoutes.post('/register', validateRegister, authController.register)
 authRoutes.post('/login', validateLogin, authController.login)
 authRoutes.get('/me', authController.loggedUser)
+authRoutes.post('/refresh', authController.refresh)
+authRoutes.post('/logout', authController.logout)
 
 module.exports = { authRoutes }

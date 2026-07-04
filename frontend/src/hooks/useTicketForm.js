@@ -9,7 +9,7 @@ const INITIAL_TICKET = {
 export const TICKET_TITLE_LENGTH = { min: 5, max: 120 }
 export const TICKET_DESCRIPTION_LENGTH = { min: 10, max: 4000 }
 
-const useTicketForm = (token, { initialTicket = INITIAL_TICKET, onSuccess } = {}) => {
+const useTicketForm = ({ initialTicket = INITIAL_TICKET, onSuccess } = {}) => {
   const [ticket, setTicket] = useState(initialTicket)
   const [isLoading, setIsLoading] = useState(false)
   const [errors, setErrors] = useState(null)
@@ -39,7 +39,7 @@ const useTicketForm = (token, { initialTicket = INITIAL_TICKET, onSuccess } = {}
     setIsLoading(true)
 
     try {
-      const data = await createTicket(ticket, token)
+      const data = await createTicket(ticket)
 
       if (!data.success) {
         setErrors(data.errors || data.message || 'Unable to create ticket. Please try again.')
@@ -61,7 +61,7 @@ const useTicketForm = (token, { initialTicket = INITIAL_TICKET, onSuccess } = {}
     setIsLoading(true)
 
     try {
-      const data = await editTicket(ticket._id, ticket, token)
+      const data = await editTicket(ticket._id, ticket)
 
       if (!data.success) {
         setErrors(data.errors || data.message || 'Unable to edit ticket. Please try again.')

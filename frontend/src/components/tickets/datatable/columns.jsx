@@ -1,22 +1,8 @@
 import UserHoverInfo from '@/components/shared/UserHoverInfo'
+import SortableHeader from '@/components/tickets/datatable/SortableHeader'
 import TicketStatusBadge from '@/components/tickets/TicketStatusBadge'
-import { Button } from '@/components/ui/button'
-import { ArrowDownNarrowWide, ArrowUpDown, ArrowUpNarrowWide } from 'lucide-react'
 import moment from 'moment'
 import { Link } from 'react-router'
-
-const SortableHeader = ({ column, label }) => (
-  <Button variant="ghost" size="sm" className="-ml-3 h-8" onClick={column.getToggleSortingHandler()}>
-    {label}{' '}
-    {column.getIsSorted() === 'asc' ? (
-      <ArrowDownNarrowWide className="ml-2 size-3.5" />
-    ) : column.getIsSorted() === 'desc' ? (
-      <ArrowUpNarrowWide className="ml-2 size-3.5" />
-    ) : (
-      <ArrowUpDown className="ml-2 size-3.5 text-muted-foreground" />
-    )}
-  </Button>
-)
 
 export const buildColumns = ({ isAdmin }) => [
   {

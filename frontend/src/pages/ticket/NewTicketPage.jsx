@@ -1,6 +1,7 @@
 import PageHeader from '@/components/shared/PageHeader'
 import CreateTicketForm from '@/components/tickets/CreateTicketForm'
 import AppLayout from '@/layouts/AppLayout'
+import { useEffect } from 'react'
 
 const NewTicketPage = () => {
   useEffect(() => {

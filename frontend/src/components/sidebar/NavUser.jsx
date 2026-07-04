@@ -7,8 +7,9 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { SidebarMenuButton, SidebarMenuItem, useSidebar } from '@/components/ui/sidebar'
-import { useAuth } from '@/providers/AuthProvider'
+import { SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar'
+import { useSidebar } from '@/components/ui/sidebar-context'
+import { useAuth } from '@/context/AuthContext'
 import { ChevronsUpDown, LogOut } from 'lucide-react'
 
 const NavUser = () => {

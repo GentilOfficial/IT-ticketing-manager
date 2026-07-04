@@ -1,6 +1,7 @@
 const express = require('express')
 const cors = require('cors')
 const { initServer } = require('./config/server')
+const { initSessionCookies } = require('./config/session')
 require('dotenv').config()
 
 const { requestLogger } = require('./middleware/logger.middleware')
@@ -15,7 +16,15 @@ const MONGODB_CONNECTION_STRING = process.env.MONGODB_CONNECTION_STRING
 const server = express()
 
 server.use(express.json())
-server.use(cors())
+
+server.use(
+  cors({
+    origin: process.env.FRONTEND_ORIGIN,
+    credentials: true,
+  }),
+)
+
+initSessionCookies(server)
 
 server.use(requestLogger)
 server.use(protectRoutes)
