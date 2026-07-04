@@ -11,6 +11,7 @@ const initSessionCookies = (server) => {
       cookie: {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
+        sameSite: 'none',
         maxAge: process.env.SESSION_TIMEOUT_MINUTES * 60 * 1000,
       },
     }),
