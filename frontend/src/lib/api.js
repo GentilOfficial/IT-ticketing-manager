@@ -45,6 +45,8 @@ export const register = (userDetails) => request('/api/auth/register', { method:
 
 export const refreshToken = (retry) => request('/api/auth/refresh', { method: 'POST' }, retry)
 
+export const sessionLogout = () => request('/api/auth/logout', { method: 'POST' })
+
 export const getTickets = (params = {}) => {
   const searchParams = new URLSearchParams()
 

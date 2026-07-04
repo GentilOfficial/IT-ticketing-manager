@@ -1,6 +1,7 @@
-import { getCurrentUser, login as loginRequest, register as registerRequest } from '@/lib/api'
+import { getCurrentUser, login as loginRequest, register as registerRequest, sessionLogout } from '@/lib/api'
 import { getToken, onTokenChange, setToken } from '@/lib/authToken'
 import { createContext, useContext, useEffect, useState } from 'react'
+import { toast } from 'sonner'
 
 export const AuthContext = createContext({})
 
@@ -9,9 +10,23 @@ const AuthProvider = ({ children }) => {
   const [errors, setErrors] = useState(null)
   const [isLoading, setIsLoading] = useState(true)
 
-  const logout = () => {
-    setUser(null)
-    setToken(null)
+  const logout = async () => {
+    try {
+      const res = await sessionLogout()
+
+      if (!res.success) {
+        toast.error('Server logout failed', { position: 'top-center' })
+      } else {
+        toast.success('Successfully logged out. You can close this tab.', { position: 'top-center' })
+      }
+    } catch (e) {
+      console.error('Logout request failed:', e)
+      toast.error('Network error during logout', { position: 'top-center' })
+    } finally {
+      setUser(null)
+      setToken(null)
+      setErrors(null)
+    }
   }
 
   const fetchUser = async () => {
@@ -19,7 +34,7 @@ const AuthProvider = ({ children }) => {
       const data = await getCurrentUser()
 
       if (!data.success) {
-        logout()
+        await logout()
         return false
       }
 
