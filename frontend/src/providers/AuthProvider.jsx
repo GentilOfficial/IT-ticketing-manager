@@ -9,22 +9,20 @@ const AuthProvider = ({ children }) => {
   const [errors, setErrors] = useState(null)
   const [isLoading, setIsLoading] = useState(true)
 
-  const logout = async () => {
-    try {
-      const res = await sessionLogout()
+  const clearSession = () => {
+    setUser(null)
+    setToken(null)
+    setErrors(null)
+  }
 
-      if (!res.success) {
-        toast.error('Server logout failed', { position: 'top-center' })
-      } else {
-        toast.success('Successfully logged out. You can close this tab.', { position: 'top-center' })
-      }
+  const logout = async (force = false) => {
+    try {
+      if (!force) await sessionLogout()
     } catch (e) {
       console.error('Logout request failed:', e)
-      toast.error('Network error during logout', { position: 'top-center' })
     } finally {
-      setUser(null)
-      setToken(null)
-      setErrors(null)
+      clearSession()
+      toast.success('Logged out successfully', { position: 'top-center' })
     }
   }
 
@@ -33,7 +31,7 @@ const AuthProvider = ({ children }) => {
       const data = await getCurrentUser()
 
       if (!data.success) {
-        await logout()
+        await logout(true)
         return false
       }
 
