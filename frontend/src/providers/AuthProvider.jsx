@@ -1,5 +1,5 @@
 import { getCurrentUser, login as loginRequest, register as registerRequest } from '@/lib/api'
-import { getToken, setToken } from '@/lib/authToken'
+import { getToken, onTokenChange, setToken } from '@/lib/authToken'
 import { createContext, useContext, useEffect, useState } from 'react'
 
 export const AuthContext = createContext({})
@@ -74,7 +74,6 @@ const AuthProvider = ({ children }) => {
       setIsLoading(true)
       try {
         const storedToken = getToken()
-        console.log(storedToken)
         if (storedToken) {
           await fetchUser()
         }
@@ -84,6 +83,17 @@ const AuthProvider = ({ children }) => {
     }
 
     initAuth()
+  }, [])
+
+  useEffect(() => {
+    const unsubscribe = onTokenChange((token) => {
+      if (!token) {
+        setUser(null)
+        setErrors('Session expired. Please login again.')
+      }
+    })
+
+    return unsubscribe
   }, [])
 
   return (
