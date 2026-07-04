@@ -97,6 +97,12 @@ class AssignedUserNotAdmin extends HttpError {
   }
 }
 
+class TooManyRequests extends HttpError {
+  constructor() {
+    super(429, 'Too many requests, please try again later.')
+  }
+}
+
 module.exports = {
   HttpError,
   InternalServerError,
@@ -114,4 +120,5 @@ module.exports = {
   ValidationError,
   InvalidObjectId,
   AssignedUserNotAdmin,
+  TooManyRequests,
 }
