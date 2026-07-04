@@ -5,8 +5,8 @@ import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Separator } from '@/components/ui/separator'
 import { Spinner } from '@/components/ui/spinner'
+import { useAuth } from '@/context/AuthContext'
 import useAdmins from '@/hooks/useAdmins'
-import { useAuth } from '@/providers/AuthProvider'
 import moment from 'moment'
 
 const TICKET_STATUS_TRANSITIONS = {

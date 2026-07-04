@@ -3,8 +3,8 @@ import FormField from '@/components/form/FormField'
 import { Button } from '@/components/ui/button'
 import { Field, FieldDescription, FieldGroup, FieldSeparator } from '@/components/ui/field'
 import { Spinner } from '@/components/ui/spinner'
+import { useAuth } from '@/context/AuthContext'
 import usePasswordValidation from '@/hooks/usePasswordValidation'
-import { useAuth } from '@/providers/AuthProvider'
 import { useState } from 'react'
 import { Link } from 'react-router'
 
@@ -57,7 +57,8 @@ const SignupForm = () => {
 
     const tryRegister = async () => {
       setIsLoading(true)
-      const { confirmPassword, ...payload } = userDetails
+      const payload = { ...userDetails }
+      delete payload.confirmPassword
       await register(payload)
       setIsLoading(false)
       resetPasswordField()

@@ -1,5 +1,5 @@
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
-import { useAuth } from '@/providers/AuthProvider'
+import { useAuth } from '@/context/AuthContext'
 import { Shield, User } from 'lucide-react'
 import moment from 'moment'
 

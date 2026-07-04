@@ -2,8 +2,8 @@ import TicketFilters from '@/components/tickets/datatable/TicketFilters'
 import TicketTable from '@/components/tickets/datatable/TicketTable'
 import { buildColumns } from '@/components/tickets/datatable/columns'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
+import { useAuth } from '@/context/AuthContext'
 import useTickets from '@/hooks/useTickets'
-import { useAuth } from '@/providers/AuthProvider'
 import { getCoreRowModel, useReactTable } from '@tanstack/react-table'
 import { AlertTriangle } from 'lucide-react'
 import { useState } from 'react'
@@ -56,7 +56,7 @@ const TicketList = () => {
   const handleGroupingChange = (val) => {
     setGrouping(val)
     setExpandedGroups({})
-    setPaginationState((prev) => ({ ...prev, pageIndex: 0 }))
+    setPaginationState({ ...paginationState, pageIndex: 0 })
   }
 
   const handlePaginationChange = (updater) => {
@@ -66,6 +66,7 @@ const TicketList = () => {
 
   const columns = buildColumns({ isAdmin })
 
+  // eslint-disable-next-line react-hooks/incompatible-library
   const table = useReactTable({
     data: tickets,
     columns,

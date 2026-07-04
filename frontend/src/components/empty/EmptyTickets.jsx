@@ -1,6 +1,6 @@
 import { Button } from '@/components/ui/button'
 import { Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from '@/components/ui/empty'
-import { useAuth } from '@/providers/AuthProvider'
+import { useAuth } from '@/context/AuthContext'
 import { Eraser, Plus, TicketSlash } from 'lucide-react'
 import { Link } from 'react-router'
 

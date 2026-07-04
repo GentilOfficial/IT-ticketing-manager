@@ -1,9 +1,8 @@
+import { AuthContext } from '@/context/AuthContext'
 import { getCurrentUser, login as loginRequest, register as registerRequest, sessionLogout } from '@/lib/api'
 import { getToken, onTokenChange, setToken } from '@/lib/authToken'
-import { createContext, useContext, useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { toast } from 'sonner'
-
-export const AuthContext = createContext({})
 
 const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null)
@@ -29,7 +28,7 @@ const AuthProvider = ({ children }) => {
     }
   }
 
-  const fetchUser = async () => {
+  const fetchUser = useCallback(async () => {
     try {
       const data = await getCurrentUser()
 
@@ -44,7 +43,7 @@ const AuthProvider = ({ children }) => {
       console.error('Invalid or expired token:', e)
       return false
     }
-  }
+  }, [])
 
   const login = async (credentials) => {
     setErrors(null)
@@ -98,7 +97,7 @@ const AuthProvider = ({ children }) => {
     }
 
     initAuth()
-  }, [])
+  }, [fetchUser])
 
   useEffect(() => {
     const unsubscribe = onTokenChange((token) => {
@@ -130,5 +129,3 @@ const AuthProvider = ({ children }) => {
 }
 
 export default AuthProvider
-
-export const useAuth = () => useContext(AuthContext)

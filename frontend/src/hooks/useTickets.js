@@ -17,39 +17,39 @@ const useTickets = (query = {}) => {
 
   const { search, status, page, limit, sort, order, groupBy } = query
 
-  const refreshTickets = async () => {
-    try {
-      setIsLoading(true)
-      setError(null)
+  useEffect(() => {
+    const loadTickets = async () => {
+      try {
+        setIsLoading(true)
+        setError(null)
 
-      const data = await getTickets(query)
+        const data = await getTickets({ search, status, page, limit, sort, order, groupBy })
 
-      if (!data.success) {
-        setError(data.message || 'Error during tickets loading.')
+        if (!data.success) {
+          setError(data.message || 'Error during tickets loading.')
+          setTickets([])
+          setGroups([])
+          setPagination(DEFAULT_PAGINATION)
+        } else {
+          setTickets(Array.isArray(data.tickets) ? data.tickets : [])
+          setGroups(Array.isArray(data.groups) ? data.groups : [])
+          setPagination(data.pagination || DEFAULT_PAGINATION)
+        }
+      } catch (err) {
+        console.error('An error occurred during tickets loading:', err)
+        setError('Network error. Please check your internet connection.')
         setTickets([])
         setGroups([])
         setPagination(DEFAULT_PAGINATION)
-      } else {
-        setTickets(Array.isArray(data.tickets) ? data.tickets : [])
-        setGroups(Array.isArray(data.groups) ? data.groups : [])
-        setPagination(data.pagination || DEFAULT_PAGINATION)
+      } finally {
+        setIsLoading(false)
       }
-    } catch (err) {
-      console.error('An error occurred during tickets loading:', err)
-      setError('Network error. Please check your internet connection.')
-      setTickets([])
-      setGroups([])
-      setPagination(DEFAULT_PAGINATION)
-    } finally {
-      setIsLoading(false)
     }
-  }
 
-  useEffect(() => {
-    refreshTickets()
+    loadTickets()
   }, [search, status, page, limit, sort, order, groupBy])
 
-  return { tickets, groups, pagination, isLoading, error, refreshTickets }
+  return { tickets, groups, pagination, isLoading, error }
 }
 
 export default useTickets

@@ -2,7 +2,7 @@ import EditTicketDetails from '@/components/tickets/details/EditTicketDetails'
 import TicketStatusBadge from '@/components/tickets/TicketStatusBadge'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { Separator } from '@/components/ui/separator'
-import { useAuth } from '@/providers/AuthProvider'
+import { useAuth } from '@/context/AuthContext'
 import moment from 'moment'
 
 const MainTicketDetails = ({ ticket, ticketStatus, onTicketUpdated }) => {
