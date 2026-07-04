@@ -1,4 +1,5 @@
 const session = require('express-session')
+const MongoStore = require('connect-mongo').default
 
 const initSessionCookies = (server) => {
   const isProduction = process.env.NODE_ENV === 'production'
@@ -11,6 +12,9 @@ const initSessionCookies = (server) => {
       resave: false,
       saveUninitialized: false,
       rolling: true,
+      store: MongoStore.create({
+        mongoUrl: process.env.MONGODB_CONNECTION_STRING,
+      }),
       cookie: {
         httpOnly: true,
         secure: isProduction,
