@@ -70,16 +70,6 @@ const login = async (req, res, next) => {
   }
 }
 
-const loggedUser = async (req, res, next) => {
-  try {
-    const { user } = req
-
-    return sendSuccess(res, { user })
-  } catch (e) {
-    return next(e)
-  }
-}
-
 const refresh = async (req, res, next) => {
   try {
     if (!req.session.user_id) {
@@ -107,4 +97,4 @@ const logout = (req, res) => {
   })
 }
 
-module.exports = { register, login, loggedUser, refresh, logout }
+module.exports = { register, login, refresh, logout }

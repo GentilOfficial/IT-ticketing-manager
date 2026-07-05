@@ -66,12 +66,6 @@ class UnauthorizedUser extends HttpError {
   }
 }
 
-class UnauthorizedTicketEdit extends HttpError {
-  constructor(field = null) {
-    super(403, `You are not authorized to edit the ${field} field.`)
-  }
-}
-
 class TicketNotFound extends HttpError {
   constructor() {
     super(404, 'Ticket not found.')
@@ -103,6 +97,12 @@ class TooManyRequests extends HttpError {
   }
 }
 
+class UnauthorizedFieldEdit extends HttpError {
+  constructor(field = null) {
+    super(403, `You are not authorized to edit the ${field} field.`)
+  }
+}
+
 module.exports = {
   HttpError,
   InternalServerError,
@@ -115,10 +115,10 @@ module.exports = {
   SessionExpired,
   UserNotFound,
   UnauthorizedUser,
-  UnauthorizedTicketEdit,
   TicketNotFound,
   ValidationError,
   InvalidObjectId,
   AssignedUserNotAdmin,
   TooManyRequests,
+  UnauthorizedFieldEdit,
 }

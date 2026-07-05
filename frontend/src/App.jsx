@@ -2,6 +2,7 @@ import { Toaster } from '@/components/ui/sonner'
 import { TooltipProvider } from '@/components/ui/tooltip'
 import AuthRoute from '@/middleware/AuthRoute'
 import ProtectedRoute from '@/middleware/ProtectedRoute'
+import UsersPage from '@/pages/admin/UsersPage'
 import LoginPage from '@/pages/auth/LoginPage'
 import SignupPage from '@/pages/auth/SignupPage'
 import NotFoundPage from '@/pages/NotFoundPage'
@@ -32,6 +33,7 @@ const App = () => {
               <Route index element={<Navigate to="tickets" replace />} />
               <Route path="tickets" element={<TicketsPage />} />
               <Route path="tickets/:ticketId" element={<TicketDetailsPage />} />
+              <Route path="users" element={<UsersPage />} />
             </Route>
             <Route path="*" element={<NotFoundPage />} />
           </Routes>

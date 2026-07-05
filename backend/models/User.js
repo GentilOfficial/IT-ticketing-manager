@@ -1,5 +1,6 @@
 const { Schema, model } = require('mongoose')
 const { hash, compare } = require('bcrypt')
+const { UnauthorizedFieldEdit } = require('../utils/HttpError')
 
 const userSchema = new Schema(
   {
@@ -53,6 +54,18 @@ userSchema.methods.comparePassword = function (password) {
 
 userSchema.methods.isAdmin = function () {
   return this.role === 'admin'
+}
+
+userSchema.methods.changeRole = function (newRole, editor) {
+  if (this.role === newRole) {
+    return this
+  }
+
+  if (!editor.isAdmin() || this.id === editor.id) throw new UnauthorizedFieldEdit('role')
+
+  this.role = newRole
+
+  return this
 }
 
 module.exports = model('user', userSchema, 'users')

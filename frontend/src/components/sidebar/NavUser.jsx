@@ -1,4 +1,4 @@
-import { Avatar, AvatarFallback } from '@/components/ui/avatar'
+import UserAvatar from '@/components/shared/UserAvatar'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -28,11 +28,7 @@ const NavUser = () => {
             size="lg"
             className={`data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground`}
           >
-            <Avatar>
-              <AvatarFallback className="font-semibold text-xs shrink-0">
-                {user.name.slice(0, 2).toUpperCase() || 'U'}
-              </AvatarFallback>
-            </Avatar>
+            <UserAvatar user={user} />
             <div className="grid flex-1 text-left text-sm leading-tight">
               <span className="truncate font-medium">{user.name}</span>
               <span className="truncate text-xs">{user.email}</span>
@@ -48,11 +44,7 @@ const NavUser = () => {
         >
           <DropdownMenuLabel className="p-0 font-normal">
             <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
-              <Avatar>
-                <AvatarFallback className="font-semibold text-xs shrink-0">
-                  {user.name.slice(0, 2).toUpperCase() || 'U'}
-                </AvatarFallback>
-              </Avatar>
+              <UserAvatar user={user} />
               <div className="grid flex-1 text-left text-sm leading-tight">
                 <span className="truncate font-medium">{user.name}</span>
                 <span className="truncate text-xs">{user.email}</span>

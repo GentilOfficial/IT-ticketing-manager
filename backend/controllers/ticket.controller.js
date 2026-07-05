@@ -1,6 +1,6 @@
 const User = require('../models/User')
 const Ticket = require('../models/Ticket')
-const { UserNotFound, MissingFields, UnauthorizedTicketEdit } = require('../utils/HttpError')
+const { UserNotFound, MissingFields, UnauthorizedFieldEdit } = require('../utils/HttpError')
 const { sendSuccess } = require('../utils/responses')
 
 const TICKET_STATUSES = ['open', 'in_progress', 'on_hold', 'resolved']
@@ -151,12 +151,12 @@ const editTicketDetails = async (req, res, next) => {
     if (description) ticket.description = description
 
     if (status) {
-      if (!user.isAdmin()) throw new UnauthorizedTicketEdit('status')
+      if (!user.isAdmin()) throw new UnauthorizedFieldEdit('status')
       ticket.changeStatus(status)
     }
 
     if (assignedTo) {
-      if (!user.isAdmin()) throw new UnauthorizedTicketEdit('assignedTo')
+      if (!user.isAdmin()) throw new UnauthorizedFieldEdit('assignedTo')
       const assignedUser = await User.findById(assignedTo)
 
       if (!assignedUser) {

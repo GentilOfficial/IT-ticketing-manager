@@ -1,4 +1,5 @@
 import EmptyTickets from '@/components/empty/EmptyTickets'
+import InitTicketsLoading from '@/components/loading/InitTicketsLoading'
 import UserHoverInfo from '@/components/shared/UserHoverInfo'
 import TicketStatusBadge from '@/components/tickets/TicketStatusBadge'
 import { Button } from '@/components/ui/button'
@@ -84,15 +85,11 @@ const TicketTable = ({
           </TableHeader>
           <TableBody>
             {isLoading ? (
-              Array.from({ length: 12 }).map((_, i) => (
-                <TableRow key={i}>
-                  {columns.map((_, j) => (
-                    <TableCell key={j}>
-                      <div className="h-4 w-full animate-pulse rounded bg-muted" />
-                    </TableCell>
-                  ))}
-                </TableRow>
-              ))
+              <TableRow>
+                <TableCell colSpan={columns.length} className="py-12">
+                  <InitTicketsLoading />
+                </TableCell>
+              </TableRow>
             ) : rows.length > 0 ? (
               isGrouped ? (
                 groups.map((group) => {

@@ -1,4 +1,4 @@
-import { Avatar, AvatarFallback } from '@/components/ui/avatar'
+import UserAvatar from '@/components/shared/UserAvatar'
 import { useAuth } from '@/context/AuthContext'
 import { Shield, User } from 'lucide-react'
 import moment from 'moment'
@@ -11,11 +11,7 @@ const CommentItem = ({ comment }) => {
 
   return (
     <div className={`flex gap-3 ${isOwn ? 'flex-row-reverse' : ''}`}>
-      <Avatar>
-        <AvatarFallback className="font-semibold text-xs shrink-0">
-          {author.name.slice(0, 2).toUpperCase() || 'U'}
-        </AvatarFallback>
-      </Avatar>
+      <UserAvatar user={author} />
       <div className={`flex flex-col gap-1 min-w-0 max-w-4/5 ${isOwn ? 'items-end' : 'items-start'}`}>
         <div className="flex items-center gap-1 text-xs text-muted-foreground">
           {author.role === 'admin' ? <Shield className="size-3.5" /> : <User className="size-3.5" />}
