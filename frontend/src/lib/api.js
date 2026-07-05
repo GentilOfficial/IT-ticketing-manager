@@ -37,8 +37,6 @@ const request = async (path, { method = 'GET', body } = {}, retry = false) => {
   return data
 }
 
-export const getCurrentUser = () => request('/api/auth/me')
-
 export const login = (credentials) => request('/api/auth/login', { method: 'POST', body: credentials })
 
 export const register = (userDetails) => request('/api/auth/register', { method: 'POST', body: userDetails })
@@ -79,8 +77,12 @@ export const getTicketComments = (ticketId) => request(`/api/tickets/${ticketId}
 export const createTicketComment = (ticketId, message) =>
   request(`/api/tickets/${ticketId}/comments`, { method: 'POST', body: message })
 
+export const getCurrentUser = () => request('/api/users/me')
+
 export const getAllUsers = () => request('/api/users/all')
 
 export const getAdminUsers = () => request('/api/users/admin')
+
+export const editUser = (userId, edits) => request(`/api/users/${userId}`, { method: 'PUT', body: edits })
 
 export default request

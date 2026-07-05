@@ -11,7 +11,7 @@ import {
   SidebarMenuItem,
 } from '@/components/ui/sidebar'
 import { useAuth } from '@/context/AuthContext'
-import { Headset, Ticket, TicketPlus } from 'lucide-react'
+import { Headset, Ticket, TicketPlus, Users } from 'lucide-react'
 import { Link, useLocation } from 'react-router'
 
 const SIDEBAR_ITEMS = {
@@ -19,7 +19,10 @@ const SIDEBAR_ITEMS = {
     { label: 'My Tickets', icon: Ticket, to: '/tickets' },
     { label: 'New Ticket', icon: TicketPlus, to: '/new/ticket' },
   ],
-  admin: [{ label: 'Tickets', icon: Ticket, to: '/admin/tickets' }],
+  admin: [
+    { label: 'Tickets', icon: Ticket, to: '/admin/tickets' },
+    { label: 'Users', icon: Users, to: '/admin/users' },
+  ],
 }
 
 const AppSidebar = () => {
