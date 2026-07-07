@@ -1,6 +1,7 @@
 const User = require('../models/User')
 const { userRoutes } = require('../routes/user.routes')
 const { sendSuccess } = require('../utils/responses')
+const { normalizeRegex, getPositiveInteger } = require('../utils/pagination')
 
 const loggedUser = async (req, res, next) => {
   try {
@@ -14,9 +15,38 @@ const loggedUser = async (req, res, next) => {
 
 const allUsers = async (req, res, next) => {
   try {
-    const users = await User.find().sort({ name: 1 })
+    const { search } = req.query
 
-    return sendSuccess(res, { users })
+    const requestedPage = getPositiveInteger(req.query.page, 1)
+    const limit = Math.min(100, getPositiveInteger(req.query.limit, 20))
+
+    const filters = search
+      ? {
+          $or: [
+            { name: { $regex: normalizeRegex(search), $options: 'i' } },
+            { email: { $regex: normalizeRegex(search), $options: 'i' } },
+          ],
+        }
+      : {}
+
+    const totalUsers = await User.countDocuments(filters)
+    const totalPages = Math.max(1, Math.ceil(totalUsers / limit))
+    const page = Math.min(requestedPage, totalPages)
+    const skip = (page - 1) * limit
+
+    const users = await User.find(filters).sort({ name: 1 }).skip(skip).limit(limit)
+
+    return sendSuccess(res, {
+      users,
+      pagination: {
+        page,
+        limit,
+        totalUsers,
+        totalPages,
+        hasNext: page < totalPages,
+        hasPrev: page > 1,
+      },
+    })
   } catch (e) {
     return next(e)
   }

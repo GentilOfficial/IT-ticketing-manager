@@ -7,6 +7,7 @@ const validateTicketCreate = [
     .trim()
     .isLength({ min: 10, max: 4000 })
     .withMessage('Description must be between 10 and 4000 characters'),
+  body('createdBy').optional().isMongoId().withMessage('Invalid target user id'),
   validateRequest,
 ]
 
