@@ -1,15 +1,29 @@
 import FormField from '@/components/form/FormField'
+import CreateTicketUserPicker from '@/components/tickets/CreateTicketUserPicker'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardFooter } from '@/components/ui/card'
+import { Field } from '@/components/ui/field'
+import { Label } from '@/components/ui/label'
 import { Spinner } from '@/components/ui/spinner'
+import { useAuth } from '@/context/AuthContext'
 import useTicketForm, { TICKET_DESCRIPTION_LENGTH, TICKET_TITLE_LENGTH } from '@/hooks/useTicketForm'
 import { AlertCircle, ArrowLeft, Eraser, Send, TicketCheck } from 'lucide-react'
 import { Link } from 'react-router'
 
 const CreateTicketForm = () => {
-  const { ticket, isLoading, errors, success, onChangeSetTicketField, resetFormFields, submitTicketForm } =
-    useTicketForm()
+  const { isAdmin } = useAuth()
+  const {
+    ticket,
+    createdByUser,
+    setCreatedByUser,
+    isLoading,
+    errors,
+    success,
+    onChangeSetTicketField,
+    resetFormFields,
+    submitTicketForm,
+  } = useTicketForm()
 
   const canSubmitForm = Object.values(ticket).every(Boolean)
 
@@ -47,6 +61,19 @@ const CreateTicketForm = () => {
               maxLength={TICKET_DESCRIPTION_LENGTH.max}
               className="min-h-44"
             />
+            {isAdmin && (
+              <Field className="flex flex-col gap-2">
+                <Label className={fieldErrors.some((err) => err.field === 'createdBy') && 'text-destructive'}>
+                  Create ticket on behalf of
+                </Label>
+                <CreateTicketUserPicker
+                  selectedUser={createdByUser}
+                  onSelectUser={setCreatedByUser}
+                  disabled={isLoading}
+                  errors={fieldErrors.filter((err) => err.field === 'createdBy')}
+                />
+              </Field>
+            )}
             {formError && (
               <Alert variant="destructive">
                 <AlertCircle />

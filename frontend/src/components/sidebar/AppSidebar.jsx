@@ -21,6 +21,7 @@ const SIDEBAR_ITEMS = {
   ],
   admin: [
     { label: 'Tickets', icon: Ticket, to: '/admin/tickets' },
+    { label: 'New Ticket', icon: TicketPlus, to: '/admin/new/ticket' },
     { label: 'Users', icon: Users, to: '/admin/users' },
   ],
 }

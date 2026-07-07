@@ -27,13 +27,14 @@ const App = () => {
               <Route index element={<Navigate to="tickets" replace />} />
               <Route path="tickets" element={<TicketsPage />} />
               <Route path="tickets/:ticketId" element={<TicketDetailsPage />} />
-              <Route path="/new/ticket" element={<NewTicketPage />} />
+              <Route path="new/ticket" element={<NewTicketPage />} />
             </Route>
             <Route path="admin" element={<ProtectedRoute role="admin" />}>
               <Route index element={<Navigate to="tickets" replace />} />
               <Route path="tickets" element={<TicketsPage />} />
               <Route path="tickets/:ticketId" element={<TicketDetailsPage />} />
               <Route path="users" element={<UsersPage />} />
+              <Route path="new/ticket" element={<NewTicketPage />} />
             </Route>
             <Route path="*" element={<NotFoundPage />} />
           </Routes>
