@@ -22,7 +22,7 @@ const UsersListItem = ({ user, isLast = false, onUserUpdated }) => {
                 {user._id === authUser._id && (
                   <>
                     <Separator orientation="vertical" />
-                    <Badge variant="outline">
+                    <Badge variant="outline" className="bg-sky-50 text-sky-700 border-sky-200">
                       <UserStar />
                       <span>you</span>
                     </Badge>
@@ -34,7 +34,7 @@ const UsersListItem = ({ user, isLast = false, onUserUpdated }) => {
             <div className="mt-1.5 flex items-center gap-2 flex-wrap">
               <UserRoleBadge role={user.role} className="text-xs py-0.5 px-2" />
               <Separator orientation="vertical" />
-              <AuthProviderBadge provider={user.oauth?.provider} className="text-xs" />
+              <AuthProviderBadge provider={user.oauth.provider} className="text-xs" />
               <Separator orientation="vertical" className="sm:hidden" />
               <span className="text-xs text-muted-foreground sm:hidden">Joined {createdAt}</span>
             </div>
