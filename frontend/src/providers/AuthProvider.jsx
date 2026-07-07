@@ -15,7 +15,7 @@ const AuthProvider = ({ children }) => {
     setErrors(null)
   }
 
-  const logout = async (force = false) => {
+  const logout = useCallback(async (force = false) => {
     try {
       if (!force) await sessionLogout()
     } catch (e) {
@@ -24,7 +24,7 @@ const AuthProvider = ({ children }) => {
       clearSession()
       toast.success('Logged out successfully', { position: 'top-center' })
     }
-  }
+  }, [])
 
   const fetchUser = useCallback(async () => {
     try {
@@ -41,7 +41,7 @@ const AuthProvider = ({ children }) => {
       console.error('Invalid or expired token:', e)
       return false
     }
-  }, [])
+  }, [logout])
 
   const login = async (credentials) => {
     setErrors(null)
