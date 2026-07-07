@@ -79,7 +79,20 @@ export const createTicketComment = (ticketId, message) =>
 
 export const getCurrentUser = () => request('/api/users/me')
 
-export const getAllUsers = () => request('/api/users/all')
+export const getAllUsers = (params = {}) => {
+  const searchParams = new URLSearchParams()
+
+  Object.entries(params).forEach(([key, value]) => {
+    if (value !== undefined && value !== null && value !== '') {
+      searchParams.append(key, value)
+    }
+  })
+
+  const queryString = searchParams.toString()
+  const path = `/api/users/all${queryString ? `?${queryString}` : ''}`
+
+  return request(path)
+}
 
 export const getAdminUsers = () => request('/api/users/admin')
 

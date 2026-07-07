@@ -2,18 +2,11 @@ const User = require('../models/User')
 const Ticket = require('../models/Ticket')
 const { UserNotFound, MissingFields, UnauthorizedFieldEdit } = require('../utils/HttpError')
 const { sendSuccess } = require('../utils/responses')
+const { normalizeRegex, getPositiveInteger } = require('../utils/pagination')
 
 const TICKET_STATUSES = ['open', 'in_progress', 'on_hold', 'resolved']
 const SORT_FIELDS = ['title', 'status', 'createdAt']
 const GROUP_FIELDS = ['status', 'createdBy', 'assignedTo']
-
-const normalizeRegex = (text) => text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
-
-const getPositiveInteger = (value, fallback) => {
-  const parsedValue = Number.parseInt(value, 10)
-
-  return Number.isFinite(parsedValue) && parsedValue > 0 ? parsedValue : fallback
-}
 
 const getUserGroup = (user, fallbackKey, fallbackLabel) => {
   if (!user) {
@@ -117,13 +110,29 @@ const getTickets = async (req, res, next) => {
 const createTicket = async (req, res, next) => {
   try {
     const { user, body } = req
-    const { title, description } = body
+    const { title, description, createdBy } = body
 
     if (!title || !description) {
       throw new MissingFields()
     }
 
-    const ticket = new Ticket({ title, description, createdBy: user.id })
+    let ticketAuthor = user
+
+    if (createdBy) {
+      if (!user.isAdmin()) {
+        throw new UnauthorizedFieldEdit('createdBy')
+      }
+
+      const targetUser = await User.findById(createdBy)
+
+      if (!targetUser) {
+        throw new UserNotFound()
+      }
+
+      ticketAuthor = targetUser
+    }
+
+    const ticket = new Ticket({ title, description, createdBy: ticketAuthor.id })
     await ticket.save()
 
     return sendSuccess(res, { ticket }, 201)

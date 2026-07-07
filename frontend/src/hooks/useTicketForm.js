@@ -11,6 +11,7 @@ export const TICKET_DESCRIPTION_LENGTH = { min: 10, max: 4000 }
 
 const useTicketForm = ({ initialTicket = INITIAL_TICKET, onSuccess } = {}) => {
   const [ticket, setTicket] = useState(initialTicket)
+  const [createdByUser, setCreatedByUser] = useState(null)
   const [isLoading, setIsLoading] = useState(false)
   const [errors, setErrors] = useState(null)
   const [success, setSuccess] = useState(null)
@@ -26,6 +27,7 @@ const useTicketForm = ({ initialTicket = INITIAL_TICKET, onSuccess } = {}) => {
 
   const resetFormFields = () => {
     setTicket(initialTicket)
+    setCreatedByUser(null)
   }
 
   const resetMessages = () => {
@@ -39,7 +41,8 @@ const useTicketForm = ({ initialTicket = INITIAL_TICKET, onSuccess } = {}) => {
     setIsLoading(true)
 
     try {
-      const data = await createTicket(ticket)
+      const payload = { ...ticket, ...(createdByUser ? { createdBy: createdByUser._id } : {}) }
+      const data = await createTicket(payload)
 
       if (!data.success) {
         setErrors(data.errors || data.message || 'Unable to create ticket. Please try again.')
@@ -78,6 +81,8 @@ const useTicketForm = ({ initialTicket = INITIAL_TICKET, onSuccess } = {}) => {
 
   return {
     ticket,
+    createdByUser,
+    setCreatedByUser,
     isLoading,
     errors,
     success,
