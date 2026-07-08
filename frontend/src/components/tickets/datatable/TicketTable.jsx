@@ -31,7 +31,7 @@ const TicketTable = ({
   const rows = table.getRowModel().rows
   const ticketRows = table.getCoreRowModel().rows
   const visibleColumns = table.getVisibleLeafColumns()
-  const total = pagination?.total ?? ticketRows.length
+  const total = pagination ? pagination.total : ticketRows.length
   const firstItem = total === 0 ? 0 : pageIndex * pageSize + 1
   const lastItem = total === 0 ? 0 : firstItem + ticketRows.length - 1
   const isGrouped = grouping !== 'none' && groups.length > 0

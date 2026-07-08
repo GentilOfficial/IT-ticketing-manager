@@ -72,6 +72,8 @@ export const editTicket = (ticketId, edits) => request(`/api/tickets/${ticketId}
 export const updateTicketAssignedTo = (ticketId, assignedTo) =>
   request(`/api/tickets/${ticketId}`, { method: 'PUT', body: { assignedTo } })
 
+export const getTicketStats = () => request('/api/tickets/stats')
+
 export const getTicketComments = (ticketId) => request(`/api/tickets/${ticketId}/comments`)
 
 export const createTicketComment = (ticketId, message) =>

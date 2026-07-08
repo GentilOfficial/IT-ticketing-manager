@@ -1,5 +1,6 @@
 import PageHeader from '@/components/shared/PageHeader'
 import TicketList from '@/components/tickets/TicketList'
+import TicketStats from '@/components/tickets/TicketStats'
 import { Button } from '@/components/ui/button'
 import { useAuth } from '@/context/AuthContext'
 import AppLayout from '@/layouts/AppLayout'
@@ -32,7 +33,10 @@ const TicketsPage = () => {
           )
         }
       />
-      <TicketList />
+      <div className="flex flex-col gap-6">
+        <TicketStats />
+        <TicketList />
+      </div>
     </AppLayout>
   )
 }

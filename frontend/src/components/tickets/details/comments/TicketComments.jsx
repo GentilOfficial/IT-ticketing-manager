@@ -77,7 +77,9 @@ const TicketComments = ({ ticketId }) => {
         <CardTitle className="text-sm font-medium flex items-center gap-2">
           <MessageSquare className="size-4" />
           Comments
-          {comments?.length > 0 && <span className="text-xs text-muted-foreground">({comments.length})</span>}
+          {comments && comments.length > 0 && (
+            <span className="text-xs text-muted-foreground">({comments.length})</span>
+          )}
         </CardTitle>
       </CardHeader>
       <CardContent
@@ -95,7 +97,7 @@ const TicketComments = ({ ticketId }) => {
               <AlertDescription>{error}</AlertDescription>
             </Alert>
           </div>
-        ) : comments?.length > 0 ? (
+        ) : comments && comments.length > 0 ? (
           comments.map((comment) => <CommentItem key={comment._id} comment={comment} />)
         ) : (
           <EmptyComments />
