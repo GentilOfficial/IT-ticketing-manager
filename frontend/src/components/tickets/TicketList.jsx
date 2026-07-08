@@ -2,6 +2,7 @@ import TicketFilters from '@/components/tickets/datatable/TicketFilters'
 import TicketTable from '@/components/tickets/datatable/TicketTable'
 import { buildColumns } from '@/components/tickets/datatable/columns'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { useAuth } from '@/context/AuthContext'
 import useTickets from '@/hooks/useTickets'
 import { getCoreRowModel, useReactTable } from '@tanstack/react-table'
@@ -97,28 +98,38 @@ const TicketList = () => {
     )
 
   return (
-    <div className="flex flex-col gap-5">
-      <TicketFilters
-        globalFilter={globalFilter}
-        onGlobalFilterChange={handleSearchChange}
-        statusFilter={statusFilter}
-        onStatusFilterChange={handleStatusFilterChange}
-        grouping={grouping}
-        onGroupingChange={handleGroupingChange}
-        isAdmin={isAdmin}
-      />
-      <TicketTable
-        table={table}
-        columns={columns}
-        isLoading={isLoading}
-        resetFilters={resetFilters}
-        pagination={pagination}
-        groups={groups}
-        grouping={grouping}
-        expandedGroups={expandedGroups}
-        onExpandedGroupsChange={setExpandedGroups}
-      />
-    </div>
+    <Card className="border-border/80">
+      <CardHeader>
+        <CardTitle>Ticket Management</CardTitle>
+        <CardDescription>
+          {isAdmin
+            ? 'Monitor, filter, and organize all tickets across the platform.'
+            : 'Track and manage the tickets you have submitted.'}
+        </CardDescription>
+      </CardHeader>
+      <CardContent className="flex flex-col gap-6">
+        <TicketFilters
+          globalFilter={globalFilter}
+          onGlobalFilterChange={handleSearchChange}
+          statusFilter={statusFilter}
+          onStatusFilterChange={handleStatusFilterChange}
+          grouping={grouping}
+          onGroupingChange={handleGroupingChange}
+          isAdmin={isAdmin}
+        />
+        <TicketTable
+          table={table}
+          columns={columns}
+          isLoading={isLoading}
+          resetFilters={resetFilters}
+          pagination={pagination}
+          groups={groups}
+          grouping={grouping}
+          expandedGroups={expandedGroups}
+          onExpandedGroupsChange={setExpandedGroups}
+        />
+      </CardContent>
+    </Card>
   )
 }
 
