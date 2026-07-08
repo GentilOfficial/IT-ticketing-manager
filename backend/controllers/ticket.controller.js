@@ -107,6 +107,36 @@ const getTickets = async (req, res, next) => {
   }
 }
 
+const getTicketStats = async (req, res, next) => {
+  try {
+    const { user } = req
+    const filters = user.isAdmin() ? {} : { createdBy: user.id }
+
+    const [stats, total] = await Promise.all([
+      Ticket.aggregate([{ $match: filters }, { $group: { _id: '$status', count: { $sum: 1 } } }]),
+      Ticket.countDocuments(filters),
+    ])
+
+    const byStatus = TICKET_STATUSES.reduce((acc, status) => {
+      acc[status] = 0
+      return acc
+    }, {})
+
+    stats.forEach((entry) => {
+      if (Object.hasOwn(byStatus, entry._id)) {
+        byStatus[entry._id] = entry.count
+      }
+    })
+
+    return sendSuccess(res, {
+      total,
+      byStatus,
+    })
+  } catch (e) {
+    return next(e)
+  }
+}
+
 const createTicket = async (req, res, next) => {
   try {
     const { user, body } = req
@@ -183,4 +213,4 @@ const editTicketDetails = async (req, res, next) => {
   }
 }
 
-module.exports = { getTickets, createTicket, getTicketDetails, editTicketDetails }
+module.exports = { getTickets, getTicketStats, createTicket, getTicketDetails, editTicketDetails }

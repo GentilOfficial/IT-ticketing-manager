@@ -7,6 +7,7 @@ const { validateTicketCreate, validateTicketUpdate } = require('../middleware/va
 const { validateCommentCreate } = require('../middleware/validation/rules/comment.validation')
 
 ticketRoutes.get('/', ticketController.getTickets)
+ticketRoutes.get('/stats', ticketController.getTicketStats)
 ticketRoutes.post('/', validateTicketCreate, ticketController.createTicket)
 ticketRoutes.get('/:id', requireTicketAccess, ticketController.getTicketDetails)
 ticketRoutes.put('/:id', [validateTicketUpdate, requireTicketAccess], ticketController.editTicketDetails)
