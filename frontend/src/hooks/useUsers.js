@@ -54,7 +54,7 @@ const useUsers = ({ enabled = true } = {}) => {
   }, [query, enabled])
 
   const loadMoreUsers = async () => {
-    if (!pagination?.hasNext || isLoading) return
+    if (!pagination.hasNext || isLoading) return
 
     const nextPage = page + 1
 
