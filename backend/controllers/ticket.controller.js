@@ -110,7 +110,7 @@ const getTickets = async (req, res, next) => {
 const getTicketStats = async (req, res, next) => {
   try {
     const { user } = req
-    const filters = user.isAdmin() ? {} : { createdBy: user.id }
+    const filters = user.isAdmin() ? {} : { createdBy: user._id }
 
     const [stats, total] = await Promise.all([
       Ticket.aggregate([{ $match: filters }, { $group: { _id: '$status', count: { $sum: 1 } } }]),
