@@ -6,6 +6,8 @@ const PUBLIC_ROUTES = [
   { path: '/api/auth/register', method: 'POST' },
   { path: '/api/auth/login', method: 'POST' },
   { path: '/api/auth/refresh', method: 'POST' },
+  { path: '/api/auth/google', method: 'GET' },
+  { path: '/api/auth/google/callback', method: 'GET' },
 ]
 
 const protectRoutes = async (req, res, next) => {
