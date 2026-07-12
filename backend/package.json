@@ -7,9 +7,13 @@
   "type": "commonjs",
   "main": "index.js",
   "scripts": {
-    "dev": "nodemon index.js"
+    "start": "node index.js",
+    "dev": "nodemon index.js",
+    "docs": "node index.js",
+    "test": "node --test"
   },
   "dependencies": {
+    "@scalar/express-api-reference": "^0.7.6",
     "bcrypt": "^6.0.0",
     "connect-mongo": "^6.0.0",
     "cors": "^2.8.6",
