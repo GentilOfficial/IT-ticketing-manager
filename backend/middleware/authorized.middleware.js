@@ -6,7 +6,7 @@ const adminOnly = async (req, res, next) => {
   try {
     const { user } = req
 
-    if (user.role !== 'admin') {
+    if (!user.isAdmin()) {
       throw new UnauthorizedUser()
     }
 
