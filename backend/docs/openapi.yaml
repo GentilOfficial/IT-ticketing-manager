@@ -1,0 +1,1159 @@
+openapi: 3.1.0
+info:
+  title: IT Ticketing Manager API
+  version: 1.0.0
+  description: |
+    REST API for IT ticket management.
+
+    Authentication model is hybrid:
+    - Most protected endpoints require both `Authorization` header (raw JWT token, no Bearer prefix)
+      and a valid `connect.sid` session cookie.
+    - `/api/auth/refresh` is public from router protection perspective, but requires a valid session cookie.
+    - Successful payloads always follow a `success: true` envelope with endpoint-specific data.
+    - Error payloads always follow a `success: false` envelope; validation errors also include an `errors` array.
+tags:
+  - name: Authentication
+  - name: Tickets
+  - name: Comments
+  - name: Users
+paths:
+  /api/auth/register:
+    post:
+      tags: [Authentication]
+      summary: Register a new user
+      description: First registered account is automatically assigned the `admin` role.
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterRequest'
+      responses:
+        '201':
+          description: User created and token generated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthSuccessResponse'
+        '400':
+          description: Missing required fields or email already registered
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Validation failed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+        '429':
+          description: Too many auth requests
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api/auth/login:
+    post:
+      tags: [Authentication]
+      summary: Login with email and password
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+      responses:
+        '200':
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthSuccessResponse'
+        '401':
+          description: Invalid credentials
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Validation failed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+        '429':
+          description: Too many auth requests
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api/auth/refresh:
+    post:
+      tags: [Authentication]
+      summary: Refresh JWT using active session
+      security:
+        - SessionCookie: []
+      responses:
+        '200':
+          description: New token generated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthSuccessResponse'
+        '401':
+          description: Authenticated user no longer exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '419':
+          description: Session expired
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '429':
+          description: Too many auth requests
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api/auth/logout:
+    post:
+      tags: [Authentication]
+      summary: Logout user and destroy current session
+      security:
+        - RawTokenAuth: []
+          SessionCookie: []
+      responses:
+        '200':
+          description: Session destroyed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessOnlyResponse'
+        '401':
+          description: Missing token or authenticated user not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '419':
+          description: Invalid/expired auth context
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '429':
+          description: Too many auth requests
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api/tickets:
+    get:
+      tags: [Tickets]
+      summary: List tickets with filters, sorting, grouping and pagination
+      security:
+        - RawTokenAuth: []
+          SessionCookie: []
+      parameters:
+        - in: query
+          name: search
+          schema:
+            type: string
+          description: Case-insensitive search by ticket title
+        - in: query
+          name: status
+          schema:
+            type: string
+            enum: [open, in_progress, on_hold, resolved]
+        - in: query
+          name: sort
+          schema:
+            type: string
+            enum: [title, status, createdAt]
+        - in: query
+          name: order
+          schema:
+            type: string
+            enum: [asc, desc]
+            default: desc
+        - in: query
+          name: groupBy
+          schema:
+            type: string
+            enum: [status, createdBy, assignedTo]
+        - in: query
+          name: page
+          schema:
+            type: integer
+            minimum: 1
+            default: 1
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 12
+      responses:
+        '200':
+          description: Ticket list
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TicketsListResponse'
+        '401':
+          description: Missing token or authenticated user not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '419':
+          description: Invalid token/session
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '429':
+          description: Too many requests
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+    post:
+      tags: [Tickets]
+      summary: Create a ticket
+      security:
+        - RawTokenAuth: []
+          SessionCookie: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateTicketRequest'
+      responses:
+        '201':
+          description: Ticket created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TicketResponse'
+        '401':
+          description: Missing token or authenticated user not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Forbidden field update (e.g. non-admin using createdBy)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Target user not found when createdBy is provided
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '419':
+          description: Invalid token/session
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Validation failed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+        '429':
+          description: Too many requests
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api/tickets/stats:
+    get:
+      tags: [Tickets]
+      summary: Retrieve ticket counters by status
+      security:
+        - RawTokenAuth: []
+          SessionCookie: []
+      responses:
+        '200':
+          description: Ticket statistics
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TicketStatsResponse'
+        '401':
+          description: Missing token or authenticated user not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '419':
+          description: Invalid token/session
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '429':
+          description: Too many requests
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api/tickets/{id}:
+    get:
+      tags: [Tickets]
+      summary: Get ticket details
+      security:
+        - RawTokenAuth: []
+          SessionCookie: []
+      parameters:
+        - $ref: '#/components/parameters/ObjectIdPathParam'
+      responses:
+        '200':
+          description: Ticket details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TicketResponse'
+        '400':
+          description: Invalid resource id format
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Access denied (not owner/admin)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Ticket not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '419':
+          description: Invalid token/session
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '429':
+          description: Too many requests
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+    put:
+      tags: [Tickets]
+      summary: Update ticket details
+      description: |
+        - `title` and `description`: editable by owner or admin.
+        - `status` and `assignedTo`: editable only by admin.
+      security:
+        - RawTokenAuth: []
+          SessionCookie: []
+      parameters:
+        - $ref: '#/components/parameters/ObjectIdPathParam'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateTicketRequest'
+      responses:
+        '200':
+          description: Ticket updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TicketResponse'
+        '400':
+          description: Invalid resource id format
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Access denied or unauthorized field edit
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Ticket or target user not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '419':
+          description: Invalid token/session
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Validation failed or invalid status transition
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/ValidationErrorResponse'
+                  - $ref: '#/components/schemas/ErrorResponse'
+        '429':
+          description: Too many requests
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api/tickets/{id}/comments:
+    get:
+      tags: [Comments]
+      summary: List ticket comments
+      security:
+        - RawTokenAuth: []
+          SessionCookie: []
+      parameters:
+        - $ref: '#/components/parameters/ObjectIdPathParam'
+      responses:
+        '200':
+          description: Comments list
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CommentsListResponse'
+        '400':
+          description: Invalid resource id format
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Access denied (not owner/admin)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Ticket not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '419':
+          description: Invalid token/session
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '429':
+          description: Too many requests
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+    post:
+      tags: [Comments]
+      summary: Create a comment for a ticket
+      security:
+        - RawTokenAuth: []
+          SessionCookie: []
+      parameters:
+        - $ref: '#/components/parameters/ObjectIdPathParam'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateCommentRequest'
+      responses:
+        '201':
+          description: Comment created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CommentResponse'
+        '400':
+          description: Invalid resource id format
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Access denied (not owner/admin)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Ticket not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '419':
+          description: Invalid token/session
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Validation failed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+        '429':
+          description: Too many requests
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api/users/me:
+    get:
+      tags: [Users]
+      summary: Get authenticated user
+      security:
+        - RawTokenAuth: []
+          SessionCookie: []
+      responses:
+        '200':
+          description: Current user details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResponse'
+        '401':
+          description: Missing token or authenticated user not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '419':
+          description: Invalid token/session
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '429':
+          description: Too many requests
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api/users/all:
+    get:
+      tags: [Users]
+      summary: List all users (admin only)
+      security:
+        - RawTokenAuth: []
+          SessionCookie: []
+      parameters:
+        - in: query
+          name: search
+          schema:
+            type: string
+          description: Search in user name or email
+        - in: query
+          name: page
+          schema:
+            type: integer
+            minimum: 1
+            default: 1
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 20
+      responses:
+        '200':
+          description: Users list with pagination
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UsersListResponse'
+        '401':
+          description: Missing token or authenticated user not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Admin role required
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '419':
+          description: Invalid token/session
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '429':
+          description: Too many requests
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api/users/admin:
+    get:
+      tags: [Users]
+      summary: List admin users
+      security:
+        - RawTokenAuth: []
+          SessionCookie: []
+      responses:
+        '200':
+          description: Admin users list
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UsersSimpleListResponse'
+        '401':
+          description: Missing token or authenticated user not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Admin role required
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '419':
+          description: Invalid token/session
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '429':
+          description: Too many requests
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api/users/{id}:
+    put:
+      tags: [Users]
+      summary: Update user profile fields (admin only)
+      description: Role changes are blocked when admin tries to change their own role.
+      security:
+        - RawTokenAuth: []
+          SessionCookie: []
+      parameters:
+        - $ref: '#/components/parameters/ObjectIdPathParam'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateUserRequest'
+      responses:
+        '200':
+          description: User updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResponse'
+        '400':
+          description: Invalid resource id format
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Missing token or authenticated user not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Admin role required or unauthorized field update
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '419':
+          description: Invalid token/session
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Validation failed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+        '429':
+          description: Too many requests
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+components:
+  securitySchemes:
+    RawTokenAuth:
+      type: apiKey
+      in: header
+      name: Authorization
+      description: Raw JWT token string. Do not prepend `Bearer`.
+    SessionCookie:
+      type: apiKey
+      in: cookie
+      name: connect.sid
+      description: Session cookie generated by `express-session`.
+
+  parameters:
+    ObjectIdPathParam:
+      in: path
+      name: id
+      required: true
+      description: MongoDB ObjectId
+      schema:
+        $ref: '#/components/schemas/ObjectId'
+
+  schemas:
+    ObjectId:
+      type: string
+      pattern: '^[0-9a-fA-F]{24}$'
+
+    SuccessOnlyResponse:
+      type: object
+      required: [success]
+      properties:
+        success:
+          type: boolean
+          const: true
+
+    AuthSuccessResponse:
+      type: object
+      required: [success, token]
+      properties:
+        success:
+          type: boolean
+          const: true
+        token:
+          type: string
+          description: JWT access token
+
+    ErrorResponse:
+      type: object
+      required: [success, message]
+      properties:
+        success:
+          type: boolean
+          const: false
+        message:
+          type: string
+          example: Error message describing the issue
+
+    ValidationErrorItem:
+      type: object
+      required: [field, message]
+      properties:
+        field:
+          type: string
+          example: someField
+        message:
+          type: string
+          example: Validation error message for the field
+
+    ValidationErrorResponse:
+      allOf:
+        - $ref: '#/components/schemas/ErrorResponse'
+        - type: object
+          required: [errors]
+          properties:
+            errors:
+              type: array
+              items:
+                $ref: '#/components/schemas/ValidationErrorItem'
+
+    UserOAuth:
+      type: object
+      required: [provider]
+      properties:
+        provider:
+          type: string
+          enum: [local, google]
+
+    UserBase:
+      type: object
+      required: [_id, name, email, role, oauth, createdAt, updatedAt]
+      properties:
+        _id:
+          $ref: '#/components/schemas/ObjectId'
+        name:
+          type: string
+          minLength: 2
+          maxLength: 60
+        email:
+          type: string
+          format: email
+        role:
+          type: string
+          enum: [user, admin]
+        oauth:
+          $ref: '#/components/schemas/UserOAuth'
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    RegisterRequest:
+      type: object
+      required: [name, email, password]
+      properties:
+        name:
+          type: string
+          minLength: 2
+          maxLength: 60
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+          minLength: 8
+          description: Must include upper/lowercase letters, number, special character and no spaces.
+
+    LoginRequest:
+      type: object
+      required: [email, password]
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+
+    User:
+      allOf:
+        - $ref: '#/components/schemas/UserBase'
+
+    Ticket:
+      type: object
+      required: [_id, title, description, status, createdBy, assignedTo, resolvedAt, createdAt, updatedAt]
+      properties:
+        _id:
+          $ref: '#/components/schemas/ObjectId'
+        title:
+          type: string
+          minLength: 5
+          maxLength: 120
+        description:
+          type: string
+          minLength: 10
+          maxLength: 4000
+        status:
+          type: string
+          enum: [open, in_progress, on_hold, resolved]
+        createdBy:
+          $ref: '#/components/schemas/User'
+        assignedTo:
+          oneOf:
+            - $ref: '#/components/schemas/User'
+            - type: 'null'
+        resolvedAt:
+          oneOf:
+            - type: string
+              format: date-time
+            - type: 'null'
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    Comment:
+      type: object
+      required: [_id, ticket, author, message, createdAt, updatedAt]
+      properties:
+        _id:
+          $ref: '#/components/schemas/ObjectId'
+        ticket:
+          $ref: '#/components/schemas/ObjectId'
+        author:
+          $ref: '#/components/schemas/User'
+        message:
+          type: string
+          minLength: 1
+          maxLength: 400
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    CreateTicketRequest:
+      type: object
+      required: [title, description]
+      properties:
+        title:
+          type: string
+          minLength: 5
+          maxLength: 120
+        description:
+          type: string
+          minLength: 10
+          maxLength: 4000
+        createdBy:
+          $ref: '#/components/schemas/ObjectId'
+          description: Optional, admin-only. Create ticket on behalf of another user.
+
+    UpdateTicketRequest:
+      type: object
+      properties:
+        title:
+          type: string
+          minLength: 5
+          maxLength: 120
+        description:
+          type: string
+          minLength: 10
+          maxLength: 4000
+        status:
+          type: string
+          enum: [open, in_progress, on_hold, resolved]
+        assignedTo:
+          $ref: '#/components/schemas/ObjectId'
+
+    CreateCommentRequest:
+      type: object
+      required: [message]
+      properties:
+        message:
+          type: string
+          minLength: 1
+          maxLength: 400
+
+    UpdateUserRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 2
+          maxLength: 60
+        role:
+          type: string
+          enum: [user, admin]
+
+    UserResponse:
+      type: object
+      required: [success, user]
+      properties:
+        success:
+          type: boolean
+          const: true
+        user:
+          $ref: '#/components/schemas/User'
+
+    UsersSimpleListResponse:
+      type: object
+      required: [success, users]
+      properties:
+        success:
+          type: boolean
+          const: true
+        users:
+          type: array
+          items:
+            $ref: '#/components/schemas/User'
+
+    UsersListPagination:
+      type: object
+      required: [page, limit, totalUsers, totalPages, hasNext, hasPrev]
+      properties:
+        page:
+          type: integer
+        limit:
+          type: integer
+        totalUsers:
+          type: integer
+        totalPages:
+          type: integer
+        hasNext:
+          type: boolean
+        hasPrev:
+          type: boolean
+
+    UsersListResponse:
+      type: object
+      required: [success, users, pagination]
+      properties:
+        success:
+          type: boolean
+          const: true
+        users:
+          type: array
+          items:
+            $ref: '#/components/schemas/User'
+        pagination:
+          $ref: '#/components/schemas/UsersListPagination'
+
+    TicketResponse:
+      type: object
+      required: [success, ticket]
+      properties:
+        success:
+          type: boolean
+          const: true
+        ticket:
+          $ref: '#/components/schemas/Ticket'
+
+    TicketStatusCounters:
+      type: object
+      required: [open, in_progress, on_hold, resolved]
+      properties:
+        open:
+          type: integer
+        in_progress:
+          type: integer
+        on_hold:
+          type: integer
+        resolved:
+          type: integer
+
+    TicketStatsResponse:
+      type: object
+      required: [success, total, byStatus]
+      properties:
+        success:
+          type: boolean
+          const: true
+        total:
+          type: integer
+        byStatus:
+          $ref: '#/components/schemas/TicketStatusCounters'
+
+    TicketGroup:
+      type: object
+      required: [key, label, value, count, tickets]
+      properties:
+        key:
+          oneOf:
+            - type: string
+            - type: 'null'
+        label:
+          type: string
+        value:
+          oneOf:
+            - type: string
+            - $ref: '#/components/schemas/User'
+            - type: 'null'
+        count:
+          type: integer
+        tickets:
+          type: array
+          items:
+            $ref: '#/components/schemas/Ticket'
+
+    TicketsGrouping:
+      type: object
+      required: [field, totalGroups]
+      properties:
+        field:
+          type: string
+          enum: [status, createdBy, assignedTo]
+        totalGroups:
+          type: integer
+
+    TicketsPagination:
+      type: object
+      required: [page, limit, total, totalPages]
+      properties:
+        page:
+          type: integer
+        limit:
+          type: integer
+        total:
+          type: integer
+        totalPages:
+          type: integer
+
+    TicketsListResponse:
+      type: object
+      required: [success, tickets, groups, grouping, pagination]
+      properties:
+        success:
+          type: boolean
+          const: true
+        tickets:
+          type: array
+          items:
+            $ref: '#/components/schemas/Ticket'
+        groups:
+          type: array
+          items:
+            $ref: '#/components/schemas/TicketGroup'
+        grouping:
+          oneOf:
+            - $ref: '#/components/schemas/TicketsGrouping'
+            - type: 'null'
+        pagination:
+          $ref: '#/components/schemas/TicketsPagination'
+
+    CommentResponse:
+      type: object
+      required: [success, comment]
+      properties:
+        success:
+          type: boolean
+          const: true
+        comment:
+          $ref: '#/components/schemas/Comment'
+
+    CommentsListResponse:
+      type: object
+      required: [success, comments]
+      properties:
+        success:
+          type: boolean
+          const: true
+        comments:
+          type: array
+          items:
+            $ref: '#/components/schemas/Comment'

@@ -2,6 +2,7 @@ const express = require('express')
 const cors = require('cors')
 const { initServer } = require('./config/server')
 const { initSessionCookies } = require('./config/session')
+const { initDocumentation } = require('./config/scalar')
 require('dotenv').config()
 
 const { requestLogger } = require('./middleware/logger.middleware')
@@ -25,6 +26,7 @@ server.use(
 )
 
 initSessionCookies(server)
+initDocumentation(server)
 
 server.use(requestLogger)
 server.use(protectRoutes)
