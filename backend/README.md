@@ -46,6 +46,10 @@ Location: `backend/test/`
   - Verifies ticket model business rules
   - Covers status transitions, required assignment before transition, and admin-only assignment rule
 
+- `auth.controller.test.js`
+  - Verifies authentication controller behavior
+  - Covers OAuth-only account rejection in password login flow (guard before password comparison)
+
 - `user.controller.test.js`
   - Verifies user controller logic
   - Covers search filter building and role edit flow propagation
@@ -53,6 +57,7 @@ Location: `backend/test/`
 - `user.model.test.js`
   - Verifies user role mutation rules
   - Covers admin self-role change rejection and admin editing another user
+  - Covers `findOrCreateFromGoogle` outcomes: existing Google user reuse, new Google user creation, local-email conflict rejection, invalid Google profile rejection, and unverified/missing Google email rejection
 
 ## Result Interpretation
 
