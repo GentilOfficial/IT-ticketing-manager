@@ -4,15 +4,13 @@ const { initServer } = require('./config/server')
 const { initSessionCookies } = require('./config/session')
 const { initDocumentation } = require('./config/scalar')
 require('dotenv').config()
+const { passport } = require('./config/passport')
 
 const { requestLogger } = require('./middleware/logger.middleware')
 const { protectRoutes } = require('./middleware/protect.middleware')
 const { errorHandler } = require('./middleware/error.middleware')
 
 const { router } = require('./routes/index.routes')
-
-const SERVER_PORT = process.env.PORT
-const MONGODB_CONNECTION_STRING = process.env.MONGODB_CONNECTION_STRING
 
 const server = express()
 
@@ -26,6 +24,7 @@ server.use(
 )
 
 initSessionCookies(server)
+server.use(passport.initialize())
 initDocumentation(server)
 
 server.use(requestLogger)
@@ -33,4 +32,4 @@ server.use(protectRoutes)
 server.use('/api', router)
 server.use(errorHandler)
 
-initServer(server, SERVER_PORT, MONGODB_CONNECTION_STRING)
+initServer(server, process.env.PORT, process.env.MONGODB_CONNECTION_STRING)

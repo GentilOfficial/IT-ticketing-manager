@@ -47,6 +47,10 @@ const LoginForm = () => {
     tryLogin()
   }
 
+  const handleGoogleLogin = () => {
+    window.location.href = `${import.meta.env.VITE_API_SERVER}/api/auth/google`
+  }
+
   return (
     <form className="flex flex-col gap-6" onSubmit={handleFormSubmit}>
       <FieldGroup>
@@ -83,6 +87,11 @@ const LoginForm = () => {
           </Button>
         </Field>
         <FieldSeparator>or</FieldSeparator>
+        <Field>
+          <Button type="button" variant="outline" onClick={handleGoogleLogin} disabled={isLoading}>
+            Sign in with Google
+          </Button>
+        </Field>
         <Field>
           <FieldDescription className="text-center">
             <span className="me-1">Don't have an account?</span>

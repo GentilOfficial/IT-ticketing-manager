@@ -9,6 +9,9 @@ info:
     - Most protected endpoints require both `Authorization` header (raw JWT token, no Bearer prefix)
       and a valid `connect.sid` session cookie.
     - `/api/auth/refresh` is public from router protection perspective, but requires a valid session cookie.
+    - Google OAuth login is redirect-based via `/api/auth/google` and `/api/auth/google/callback`.
+    - If a Google email already belongs to a local-password account, OAuth login is rejected with a clear error redirect.
+    - Invalid Google profile data or unverified/missing Google email also result in a redirect to frontend login with an error message.
     - Successful payloads always follow a `success: true` envelope with endpoint-specific data.
     - Error payloads always follow a `success: false` envelope; validation errors also include an `errors` array.
 tags:
@@ -37,7 +40,13 @@ paths:
               schema:
                 $ref: '#/components/schemas/AuthSuccessResponse'
         '400':
-          description: Missing required fields or email already registered
+          description: Missing required fields
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '409':
+          description: Email already registered
           content:
             application/json:
               schema:
@@ -75,6 +84,12 @@ paths:
                 $ref: '#/components/schemas/AuthSuccessResponse'
         '401':
           description: Invalid credentials
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Account is OAuth-only, password login not allowed
           content:
             application/json:
               schema:
@@ -150,6 +165,52 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
+        '429':
+          description: Too many auth requests
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api/auth/google:
+    get:
+      tags: [Authentication]
+      summary: Start Google OAuth login
+      description: Redirects the browser to Google consent/authentication page.
+      security: []
+      responses:
+        '302':
+          description: Redirect to Google OAuth consent screen
+          headers:
+            Location:
+              description: Google OAuth URL
+              schema:
+                type: string
+        '429':
+          description: Too many auth requests
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api/auth/google/callback:
+    get:
+      tags: [Authentication]
+      summary: Google OAuth callback
+      description: |
+        Handles Google OAuth callback and redirects to frontend:
+        - success: `${FRONTEND_ORIGIN}${FRONTEND_OAUTH_CALLBACK_PATH}?token=<jwt>`
+        - auth failure: `${FRONTEND_ORIGIN}${FRONTEND_LOGIN_PATH}?error=google`
+        - domain/business error (for example local account with same email, invalid Google profile, or unverified email): `${FRONTEND_ORIGIN}${FRONTEND_LOGIN_PATH}?error=<message>`
+      security: []
+      responses:
+        '302':
+          description: Redirect to frontend callback or login page with error query param
+          headers:
+            Location:
+              description: Frontend callback/login URL
+              schema:
+                type: string
         '429':
           description: Too many auth requests
           content:

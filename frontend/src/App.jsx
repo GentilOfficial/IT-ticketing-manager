@@ -4,6 +4,7 @@ import AuthRoute from '@/middleware/AuthRoute'
 import ProtectedRoute from '@/middleware/ProtectedRoute'
 import UsersPage from '@/pages/admin/UsersPage'
 import LoginPage from '@/pages/auth/LoginPage'
+import OAuthCallbackPage from '@/pages/auth/OAuthCallbackPage'
 import SignupPage from '@/pages/auth/SignupPage'
 import NotFoundPage from '@/pages/NotFoundPage'
 import NewTicketPage from '@/pages/ticket/NewTicketPage'
@@ -18,6 +19,7 @@ const App = () => {
       <TooltipProvider>
         <BrowserRouter>
           <Routes>
+            <Route path="auth/callback" element={<OAuthCallbackPage />} />
             <Route path="auth" element={<AuthRoute />}>
               <Route index element={<Navigate to="login" replace />} />
               <Route path="login" element={<LoginPage />} />

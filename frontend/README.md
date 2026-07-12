@@ -49,6 +49,10 @@ npm test
   - Verifies password validation hook rules
   - Covers each password rule and global valid state
 
+- `frontend/src/pages/auth/oauth.test.jsx`
+  - Verifies Google OAuth frontend flow
+  - Covers redirect to backend Google endpoint, callback token persistence, and missing-token error handling
+
 ## Result Interpretation
 
 - Exit code `0`: all tests passed

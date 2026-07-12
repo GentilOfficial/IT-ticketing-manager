@@ -1,6 +1,11 @@
 const { Schema, model } = require('mongoose')
 const { hash, compare } = require('bcrypt')
-const { UnauthorizedFieldEdit } = require('../utils/HttpError')
+const {
+  UnauthorizedFieldEdit,
+  EmailAlreadyRegistered,
+  InvalidGoogleProfile,
+  UnverifiedGoogleEmail,
+} = require('../utils/HttpError')
 
 const userSchema = new Schema(
   {
@@ -20,7 +25,9 @@ const userSchema = new Schema(
     },
     password: {
       type: String,
-      required: true,
+      required: function () {
+        return this.isLocal()
+      },
       select: false,
     },
     role: {
@@ -42,6 +49,8 @@ const userSchema = new Schema(
   },
   { timestamps: true, strict: true },
 )
+
+userSchema.index({ 'oauth.id': 1 }, { unique: true, sparse: true })
 
 userSchema.pre('save', async function () {
   if (!this.isModified('password') || !this.password) return
@@ -66,6 +75,54 @@ userSchema.methods.changeRole = function (newRole, editor) {
   this.role = newRole
 
   return this
+}
+
+userSchema.methods.isLocal = function () {
+  return this.oauth.provider === 'local'
+}
+
+userSchema.statics.findOrCreateFromGoogle = async function (profile) {
+  if (!profile || !profile.id) {
+    throw new InvalidGoogleProfile()
+  }
+
+  const existingOAuthUser = await this.findOne({
+    'oauth.provider': 'google',
+    'oauth.id': profile.id,
+  })
+
+  if (existingOAuthUser) {
+    return existingOAuthUser
+  }
+
+  const profileEmail = profile.emails ? profile.emails[0] : null
+  const email = profileEmail ? profileEmail.value : null
+
+  if (!email || profileEmail.verified !== true) {
+    throw new UnverifiedGoogleEmail()
+  }
+
+  const existingUserByEmail = await this.findOne({ email })
+
+  if (existingUserByEmail && existingUserByEmail.isLocal()) {
+    throw new EmailAlreadyRegistered()
+  }
+
+  if (existingUserByEmail) {
+    return existingUserByEmail
+  }
+
+  const adminExists = await this.exists({ role: 'admin' })
+
+  return this.create({
+    name: profile.displayName || email.split('@')[0],
+    email,
+    role: adminExists ? 'user' : 'admin',
+    oauth: {
+      provider: 'google',
+      id: profile.id,
+    },
+  })
 }
 
 module.exports = model('user', userSchema, 'users')

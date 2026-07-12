@@ -26,7 +26,25 @@ class MissingFields extends HttpError {
 
 class EmailAlreadyRegistered extends HttpError {
   constructor() {
-    super(400, 'Email already registered. Try to login.')
+    super(409, 'An account with this email already exists. Sign in with your password.')
+  }
+}
+
+class InvalidGoogleProfile extends HttpError {
+  constructor() {
+    super(400, 'Invalid Google profile data.')
+  }
+}
+
+class UnverifiedGoogleEmail extends HttpError {
+  constructor() {
+    super(400, 'Google account email is missing or not verified.')
+  }
+}
+
+class OAuthOnlyAccount extends HttpError {
+  constructor() {
+    super(403, "This account signs in with Google. Use 'Sign in with Google' instead of a password.")
   }
 }
 
@@ -115,6 +133,9 @@ module.exports = {
   InvalidTicketStatusTransition,
   MissingFields,
   EmailAlreadyRegistered,
+  InvalidGoogleProfile,
+  UnverifiedGoogleEmail,
+  OAuthOnlyAccount,
   InvalidCredentials,
   MissingToken,
   InvalidToken,

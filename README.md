@@ -14,6 +14,8 @@ The project is split into:
 ## Main Features
 
 - Email/password authentication with JWT tokens and server-side sessions (`connect.sid` cookie)
+- Google OAuth 2.0 sign-in via Passport redirect flow (`/api/auth/google` -> `/api/auth/google/callback`)
+- Safe OAuth policy: if a Google email already belongs to a local account, sign-in is blocked
 - `user` / `admin` roles with backend authorization checks
 - Ticket management with search, filters, sorting, grouping, and pagination
 - Controlled ticket lifecycle (`open`, `in_progress`, `on_hold`, `resolved`)
@@ -51,6 +53,12 @@ SESSION_SECRET=xxxxxxxxx
 SESSION_TIMEOUT_MINUTES=20
 
 FRONTEND_ORIGIN=http://localhost:5173
+FRONTEND_LOGIN_PATH=/auth/login
+FRONTEND_OAUTH_CALLBACK_PATH=/auth/callback
+
+GOOGLE_CLIENT_ID=xxxxxxxxx
+GOOGLE_CLIENT_SECRET=xxxxxxxxx
+GOOGLE_CALLBACK_URL=http://localhost:4545/api/auth/google/callback
 ```
 
 Frontend example (`frontend/.env`):
@@ -152,6 +160,7 @@ Authentication notes:
 
 - Protected endpoints require **both** `Authorization` header with the raw JWT token (no `Bearer` prefix) and `connect.sid` session cookie.
 - `POST /api/auth/refresh` requires a valid session cookie and does not require a token header.
+- Google OAuth endpoints are redirect-based (browser navigation), not JSON API calls.
 
 ## Testing
 
@@ -170,6 +179,8 @@ Auth:
 - `POST /auth/login`
 - `POST /auth/refresh`
 - `POST /auth/logout`
+- `GET /auth/google`
+- `GET /auth/google/callback`
 
 Tickets:
 

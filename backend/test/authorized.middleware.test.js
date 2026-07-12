@@ -108,14 +108,14 @@ test('requireTicketAccess handles missing ticket id with TicketNotFound', async 
 })
 
 test('adminOnly allows admin and rejects normal user', async () => {
-  const adminReq = { user: { role: 'admin' } }
+  const adminReq = { user: { isAdmin: () => true } }
   const adminNext = createNextSpy()
 
   await adminOnly(adminReq, {}, adminNext.next)
   assert.equal(adminNext.calls.length, 1)
   assert.equal(adminNext.calls[0], undefined)
 
-  const userReq = { user: { role: 'user' } }
+  const userReq = { user: { isAdmin: () => false } }
   const userNext = createNextSpy()
 
   await adminOnly(userReq, {}, userNext.next)

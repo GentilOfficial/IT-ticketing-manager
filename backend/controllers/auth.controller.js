@@ -3,11 +3,10 @@ const { generateToken } = require('../utils/generateToken')
 const {
   MissingFields,
   InvalidCredentials,
-  UserNotFound,
   AuthenticatedUserNotFound,
-  InvalidToken,
   SessionExpired,
   EmailAlreadyRegistered,
+  OAuthOnlyAccount,
 } = require('../utils/HttpError')
 const { sendSuccess } = require('../utils/responses')
 
@@ -50,6 +49,10 @@ const login = async (req, res, next) => {
 
     if (!user) {
       throw new InvalidCredentials()
+    }
+
+    if (!user.isLocal()) {
+      throw new OAuthOnlyAccount()
     }
 
     const validPassword = await user.comparePassword(password)
@@ -95,4 +98,35 @@ const logout = (req, res) => {
   })
 }
 
-module.exports = { register, login, refresh, logout }
+const handleGoogleCallback = async (req, res, next) => {
+  try {
+    const { user } = req
+
+    if (!user) {
+      throw new AuthenticatedUserNotFound()
+    }
+
+    const token = generateToken(user)
+
+    req.session.user_id = user.id
+
+    return res.redirect(
+      `${process.env.FRONTEND_ORIGIN}${process.env.FRONTEND_OAUTH_CALLBACK_PATH}?token=${encodeURIComponent(token)}`,
+    )
+  } catch (e) {
+    return next(e)
+  }
+}
+
+const oauthErrorRedirect = (err, req, res, next) => {
+  if (!err) {
+    return next()
+  }
+
+  const message = err.message || 'OAuth authentication failed.'
+  return res.redirect(
+    `${process.env.FRONTEND_ORIGIN}${process.env.FRONTEND_LOGIN_PATH}?error=${encodeURIComponent(message)}`,
+  )
+}
+
+module.exports = { register, login, refresh, logout, handleGoogleCallback, oauthErrorRedirect }
