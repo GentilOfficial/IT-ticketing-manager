@@ -157,8 +157,8 @@ Authentication notes:
 
 Detailed testing docs are now split by project:
 
-- Backend: `backend/README.TESTING.md`
-- Frontend: `frontend/README.TESTING.md`
+- Backend: `backend/README.md`
+- Frontend: `frontend/README.md`
 
 ## API Endpoint Summary
 
