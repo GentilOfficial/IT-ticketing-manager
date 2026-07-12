@@ -24,6 +24,12 @@ class MissingFields extends HttpError {
   }
 }
 
+class EmailAlreadyRegistered extends HttpError {
+  constructor() {
+    super(400, 'Email already registered. Try to login.')
+  }
+}
+
 class InvalidCredentials extends HttpError {
   constructor() {
     super(401, 'Invalid credentials. Try again.')
@@ -108,6 +114,7 @@ module.exports = {
   InternalServerError,
   InvalidTicketStatusTransition,
   MissingFields,
+  EmailAlreadyRegistered,
   InvalidCredentials,
   MissingToken,
   InvalidToken,

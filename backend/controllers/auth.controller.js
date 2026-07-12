@@ -7,6 +7,7 @@ const {
   AuthenticatedUserNotFound,
   InvalidToken,
   SessionExpired,
+  EmailAlreadyRegistered,
 } = require('../utils/HttpError')
 const { sendSuccess } = require('../utils/responses')
 
@@ -19,10 +20,7 @@ const register = async (req, res, next) => {
     }
 
     if (await User.findOne({ email })) {
-      return res.status(400).send({
-        success: false,
-        message: 'Email already registered. Try to login.',
-      })
+      throw new EmailAlreadyRegistered()
     }
 
     const adminExists = await User.exists({ role: 'admin' })
