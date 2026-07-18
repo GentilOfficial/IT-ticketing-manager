@@ -11,7 +11,7 @@ import {
   SidebarMenuItem,
 } from '@/components/ui/sidebar'
 import { useAuth } from '@/context/AuthContext'
-import { Headset, Ticket, TicketPlus, Users } from 'lucide-react'
+import { Headset, Scroll, Ticket, TicketPlus, Users } from 'lucide-react'
 import { Link, useLocation } from 'react-router'
 
 const SIDEBAR_ITEMS = {
@@ -60,6 +60,19 @@ const AppSidebar = () => {
                 </SidebarMenuButton>
               </SidebarMenuItem>
             ))}
+          </SidebarMenu>
+        </SidebarGroup>
+        <SidebarGroup className="mt-auto">
+          <SidebarGroupLabel>Documentation</SidebarGroupLabel>
+          <SidebarMenu>
+            <SidebarMenuItem>
+              <SidebarMenuButton asChild tooltip="API Documentation">
+                <a href={`${import.meta.env.VITE_API_SERVER}/docs`} target="_blank">
+                  <Scroll />
+                  <span>API Documentation</span>
+                </a>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
           </SidebarMenu>
         </SidebarGroup>
       </SidebarContent>
