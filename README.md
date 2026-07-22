@@ -21,6 +21,7 @@ The project is split into:
 - Controlled ticket lifecycle (`open`, `in_progress`, `on_hold`, `resolved`)
 - Ticket comments
 - Admin endpoints for users and ticket stats
+- Theme switch between light and dark
 
 ## Requirements And Prerequisites
 
