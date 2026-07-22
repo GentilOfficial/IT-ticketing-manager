@@ -1,6 +1,7 @@
 import { Toaster } from '@/components/ui/sonner'
 import { TooltipProvider } from '@/components/ui/tooltip'
 import AuthRoute from '@/middleware/AuthRoute'
+import HomeRoute from '@/middleware/HomeRoute'
 import ProtectedRoute from '@/middleware/ProtectedRoute'
 import UsersPage from '@/pages/admin/UsersPage'
 import LoginPage from '@/pages/auth/LoginPage'
@@ -19,6 +20,7 @@ const App = () => {
       <TooltipProvider>
         <BrowserRouter>
           <Routes>
+            <Route path="/" element={<HomeRoute />} />
             <Route path="auth/callback" element={<OAuthCallbackPage />} />
             <Route path="auth" element={<AuthRoute />}>
               <Route index element={<Navigate to="login" replace />} />
@@ -26,7 +28,6 @@ const App = () => {
               <Route path="signup" element={<SignupPage />} />
             </Route>
             <Route element={<ProtectedRoute role="user" />}>
-              <Route index element={<Navigate to="tickets" replace />} />
               <Route path="tickets" element={<TicketsPage />} />
               <Route path="tickets/:ticketId" element={<TicketDetailsPage />} />
               <Route path="new/ticket" element={<NewTicketPage />} />
