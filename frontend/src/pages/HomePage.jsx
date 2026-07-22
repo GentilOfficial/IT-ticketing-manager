@@ -1,3 +1,4 @@
+import ThemeSwitcher from '@/components/theme/ThemeSwitcher'
 import TicketStatusBadge from '@/components/tickets/TicketStatusBadge'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -93,6 +94,7 @@ const HomePage = () => {
             <Button asChild>
               <Link to="/auth/signup">Sign up</Link>
             </Button>
+            <ThemeSwitcher />
           </nav>
         </div>
       </header>
