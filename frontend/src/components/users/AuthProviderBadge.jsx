@@ -5,13 +5,13 @@ const PROVIDER_MAP = {
   google: {
     label: 'Google',
     icon: Mail,
-    badge: 'bg-rose-50 text-rose-700 border-rose-200',
+    badge: 'bg-rose-50 text-rose-700 border-rose-200 dark:bg-rose-900/30 dark:text-rose-300 dark:border-rose-800',
     iconClass: 'text-rose-500',
   },
   local: {
     label: 'Local',
     icon: KeyRound,
-    badge: 'bg-slate-50 text-slate-700 border-slate-200',
+    badge: 'bg-slate-50 text-slate-700 border-slate-200 dark:bg-slate-900/30 dark:text-slate-300 dark:border-slate-800',
     iconClass: 'text-slate-500',
   },
 }

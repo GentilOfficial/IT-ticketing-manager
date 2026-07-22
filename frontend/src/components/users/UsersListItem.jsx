@@ -22,7 +22,10 @@ const UsersListItem = ({ user, isLast = false, onUserUpdated }) => {
                 {user._id === authUser._id && (
                   <>
                     <Separator orientation="vertical" />
-                    <Badge variant="outline" className="bg-sky-50 text-sky-700 border-sky-200">
+                    <Badge
+                      variant="outline"
+                      className="bg-sky-50 text-sky-700 border-sky-200 dark:bg-sky-900/30 dark:text-sky-300 dark:border-sky-800"
+                    >
                       <UserStar />
                       <span>you</span>
                     </Badge>

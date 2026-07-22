@@ -5,13 +5,13 @@ const ROLE_MAP = {
   admin: {
     label: 'Admin',
     icon: Shield,
-    badge: 'bg-amber-50 text-amber-700 border-amber-200',
+    badge: 'bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-900/30 dark:text-amber-300 dark:border-amber-800',
     iconClass: 'text-amber-500',
   },
   user: {
     label: 'User',
     icon: User,
-    badge: 'bg-slate-50 text-slate-700 border-slate-200',
+    badge: 'bg-slate-50 text-slate-700 border-slate-200 dark:bg-slate-900/30 dark:text-slate-300 dark:border-slate-800',
     iconClass: 'text-slate-500',
   },
 }
